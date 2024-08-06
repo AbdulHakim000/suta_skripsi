@@ -1,0 +1,126 @@
+
+            <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-modal">
+        Tambah Data Pengelolaan
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="user-modal-area" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="add-modal-label">Tambah Data</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="/pengelolaan/add" method="POST" id="formTambahPembesuk">
+                    <div class="form-group">
+                        <label for="registrasi_perkara">Registrasi perkara</label>
+                        <input type="text" name="registrasi_perkara" class="form-control" id="registrasi_perkara" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registrasi_tahanan">Registrasi tahanan</label>
+                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control ch">
+                            <option value="">--Registrasi Tahanan--</option>
+                            <% tahanans.forEach(tahanan => { %>
+                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kronologi">Kronologi</label>
+                        <textarea name="kronologi" id="kronologi" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa1">Jaksa 1</label>
+                        <select name="jaksa1" id="jaksa1" class="form-control">
+                            <option value="">--Jaksa 1--</option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa2">Jaksa 2</label>
+                        <select name="jaksa2" id="jaksa2" class="form-control">
+                            <option value="">--Jaksa 2--</option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa3">Jaksa 3</label>
+                        <select name="jaksa3" id="jaksa3" class="form-control">
+                            <option value="">--Jaksa 3--</option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa4">Jaksa 4</label>
+                        <select name="jaksa4" id="jaksa4" class="form-control">
+                            <option value="">--Jaksa 4--</option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="barang_bukti">barang bukti</label>
+                        <textarea name="barang_bukti" id="barang_bukti" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="melanggar_pasal">Melangga Pasal</label>
+                        <textarea name="melanggar_pasal" id="melanggar_pasal" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lapas">Lapas</label>
+                        <select name="lapas" id="lapas" class="form-control">
+                            <option value="">--Lapas--</option>
+                            <option value="a">a</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="durasi_penahanan">Durasi Penahanan</label>
+                        <input type="text" name="durasi_penahanan" class="form-control" id="durasi_penahanan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tgl_penuntutan">tgl_penuntutan</label>
+                        <input type="date" name="tgl_penuntutan" class="form-control" id="tgl_penuntutan" required>
+                    </div>
+                    
+
+
+                    
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Simpan Data</button>
+              </div>
+              </form>
+
+
+
+            </div>
+          </div>
+        </div>
+        <script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>

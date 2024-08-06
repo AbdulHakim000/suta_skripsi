@@ -1,0 +1,83 @@
+<div class="container-fluid">
+  <a href="/surat">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data surat</h1>
+      </div>
+  </div>
+
+<form action="/surat/edit" method="POST">
+
+                    <div class="form-group">
+                        <input type="hidden" name="id_surat" class="form-control" id="id_surat" required value="<%= surat.id_surat  %>"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="nik">NIK Pembesuk</label>
+                        <select name="nik" id="nik" class="form-control ch">
+                          <option value="<%= surat.nik  %>"><%= surat.nik  %></option>
+                          <% pembesuks.forEach(pembesuk => { %>
+                          <option value="<%= pembesuk.nik  %>"><%= pembesuk.nik  %></option> 
+                          <% }) %>
+                        </select>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="registrasi_tahanan">registrasi Tahanan</label>
+                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control ch">
+                            <option value="<%= surat.registrasi_tahanan  %>"><%= surat.registrasi_tahanan  %></option>
+                            <% tahanans.forEach(tahanan => { %>
+                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hubungan">Hubungan</label>
+                        <select name="hubungan" id="hubungan" class="form-control">
+                            <option value="<%= surat.hubungan %>"><%= surat.hubungan  %></option>
+                            <option value="Saudara / saudari">Saudara / saudari</option>
+                            <option value="Keluarga">Keluarga</option>
+                            <option value="Anak">Anak</option>
+                            <option value="Orang Tua">Orang Tua</option>
+                            <option value="Teman">Teman</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal1">Tanggal Pertama</label>
+                        <input type="date" name="tanggal1" class="form-control" id="tanggal1" required value="<%= surat.tanggal1 %>"></input>
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal2">Tanggal Kedua</label>
+                        <input type="date" name="tanggal2" class="form-control" id="tanggal2" required value="<%= surat.tanggal2  %>"> <%= surat.tanggal2  %>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="pembuatan" class="form-control" id="pembuatan" required>
+                    </div>
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>
+
+<script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>

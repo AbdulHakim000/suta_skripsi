@@ -1,0 +1,82 @@
+<div class="container-fluid">
+  <a href="/pembesuk">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data Pembesuk</h1>
+      </div>
+  </div>
+<form action="/pembesuk/edit" method="POST">
+
+                    <div class="form-group">
+                        <input type="hidden" name="nik" class="form-control" id="nik" required value="<%= pembesuk.nik  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <input type="text" name="nama_pembesuk" class="form-control" id="nama" required value="<%= pembesuk.nama_pembesuk  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="tmp_lahir">Tempat Lahir</label>
+                        <input type="text" name="tmp_lahir" class="form-control" id="tmp_lahir" required value="<%= pembesuk.tmp_lahir %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="jns_kelamin">Jenis Kelamin</label>
+                        <select name="jns_kelamin" id="jns_kelamin" class="form-control">
+                            <option value="<%= pembesuk.jns_kelamin  %>"><%= pembesuk.jns_kelamin  %></option>
+                            <option value="Laki-Laki">Laki-Laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pekerjaan">Pekerjaan</label>
+                        <input type="text" name="pekerjaan" class="form-control" id="pekerjaan" required value="<%= pembesuk.pekerjaan  %>">
+                    </div>
+                    <h6>Alamat</h6>
+                    <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <select name="provinsi" id="provinsi" class="form-control" required required>
+                            <option value="<%= pembesuk.provinsi  %>"><%= pembesuk.provinsi  %></option>
+                            <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+                            <option value="Kalimantan Timur">Kalimantan Timur</option>
+                            <option value="Kalimantan Utara">Kalimantan Utara</option>
+                            <option value="Kalimantan Baratn">Kalimantan Barat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kabupaten">Kabupaten / Kota</label>
+                        <select name="kabupaten" id="kabupaten" class="form-control" required>
+                            <option value="<%= pembesuk.kabupaten  %>"><%= pembesuk.kabupaten  %></option>
+                            <option value="Kab. Banjar">Kab. Banjar</option>
+                            <option value="Kab. Tanah Laut">Kab. Tanah Laut</option>
+                            <option value="Kab. Kota Baru">Kab. Kota Baru</option>
+                            <option value="Kab. Barito Kuala">Kab. Barito Kuala</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kecamatan">Kecamatan</label>
+                        <select name="kecamatan" id="kecamatan" class="form-control"required>
+                            <option value="<%= pembesuk.kecamatan  %>"><%= pembesuk.kecamatan  %></option>
+                            <option value="Aluh-aluh">Aluh-aluh</option>
+                            <option value="Aranion">Aranio</option>
+                            <option value="Astambul">Astambul</option>
+                            <option value="Gambut">Gambut</option>
+                            <option value="Tatah Makmur">Tatah Makmur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kelurahan">Kelurahan / Desa</label>
+                        <input type="text" name="kelurahan" class="form-control" id="kelurahan" required value="<%= pembesuk.kelurahan  %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kewarganegaraan">kewarganegaraan</label>
+                        <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required value="<%= pembesuk.kewarganegaraan  %>">
+                    </div>
+              </div>
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>

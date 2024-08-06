@@ -1,0 +1,34 @@
+<div class="container-fluid">
+  <a href="/jaksa">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data Jaksa</h1>
+      </div>
+  </div>
+<form action="/jaksa/edit" method="POST">
+
+<div class="mb-3 mt-4">
+  <input type="hidden" name="nip" class="form-control" value="<%= jaksa.nip %>" required >
+</div>
+<div class="mb-3 mt-4">
+  <label for="nama" class="form-label">Nama</label>
+  <input type="text" name="nama" class="form-control" required value="<%= jaksa.nama %>">
+</div>
+<div class="form-group">
+  <label for="pangkat" >Pangkat</label>
+  <select name="pangkat" class="form-control">
+  <option value="<%= jaksa.pangkat %>"><%= jaksa.pangkat %></option>
+  <option value="Jaksa Madya">Jaksa Madya</option>
+  <option value="Jaksa Utama Pratama">Jaksa Utama Pratama</option>
+  <option value="Jaksa Muda">Jaksa Muda</option>
+  <option value="Pratama">Pratama</option>
+  </select>
+</div>
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>
