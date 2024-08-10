@@ -1,20 +1,27 @@
 module.exports = {
-    fetchData: (db, callback) => {
+   fetchData: (db, callback) => {
         db.query("SELECT * FROM jaksa", callback);
     },
     getById: (db, id, callback) => {
-        db.query("SELECT * FROM jaksa WHERE id = ", id, callback);
+        db.query("SELECT * FROM jaksa WHERE id = ?", [id], callback); // Tambahkan placeholder ?
     },
-    insertData: (db, data, callback) => {
-        db.query("INSERT INTO jaksa SET ?", data, (err, result) => {
-            if (err) throw err;
-            callback(result);
+    async insertData(db, data) {
+        const result = await db.query("INSERT INTO jaksa SET ?", [data]);
+        return result;
+    },
+
+    updateData: (db, nip, data) => {
+        return new Promise((resolve, reject) => {
+            db.query("UPDATE jaksa SET ? WHERE nip = ?", [data, nip], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }  
+            });
         });
-    },
-    updateData: (db, nip, data, callback) => {
-        db.query("UPDATE jaksa SET ? WHERE nip = ?", [data, nip], callback);
     },
     deleteData: (db, nip, callback) => {
         db.query("DELETE FROM jaksa WHERE nip = ?", nip, callback);
     }
-}
+};

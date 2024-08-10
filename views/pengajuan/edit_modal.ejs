@@ -12,7 +12,7 @@
 
 
 
-<form action="/pengajuan/edit" method="POST">
+<form action="/pengajuan/edit" method="POST" enctype="multipart/form-data">
 
 <div class="form-group">
 
@@ -89,9 +89,18 @@
                             <option value="Belum Diproses">Belum Diproses</option>
                             <option value="Sudah Selesai">Sudah Selesai</option>
                         </select>
-                        
                     </div>
-    
+                    <div class="form-group mt-4">
+                        <label for="gambar_ktp" class="form-label">Foto KTP</label>
+                        <!-- Display the current image as a preview -->
+                        <div class="mb-3">
+                            <img src="/images/pengajuan/<%= pengajuan.gambar_ktp %>" alt="Gambar KTP" class="img-thumbnail" style="max-width: 200px;">
+                        </div>
+                        <input type="file" name="gambar_ktp" class="form-control">
+                        <!-- Hidden input to keep the old image value if a new one is not uploaded -->
+                        <input type="hidden" name="old_gambar_ktp" value="<%= pengajuan.gambar_ktp %>">
+                    </div>
+                    
 
 <div mt-5>
   <button type="submit" class="btn btn-primary mt-4">Update</button>

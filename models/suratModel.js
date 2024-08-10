@@ -11,15 +11,30 @@ module.exports = {
     getById: (db, id, callback) => {
         db.query("SELECT * FROM surat WHERE id_surat = ", id, callback);
     },
-    insertData: (db, data, callback) => {
-        const { id_surat, ...dataWithoutId } = data;
-        db.query("INSERT INTO surat SET ?", dataWithoutId, (err, result) => {
-            if (err) throw err;
-            callback(result);
+    insertData: async (db, data) => {
+        const { id_tahanan, ...dataWithoutId } = data;
+        // Mengembalikan Promise
+        return new Promise((resolve, reject) => {
+            db.query("INSERT INTO surat SET ?", dataWithoutId, (err, result) => {
+                if (err) {
+                    // Menolak Promise jika ada kesalahan
+                    return reject(err);
+                }
+                // Menyelesaikan Promise dengan hasil query
+                resolve(result);
+            });
         });
     },
-    updateData: (db, id, data, callback) => {
-        db.query("UPDATE surat SET ? WHERE id_surat = ?", [data, id], callback);
+    updateData: (db, id, data) => {
+        return new Promise((resolve, reject) => {
+            db.query("UPDATE surat SET ? WHERE id_surat = ?", [data, id], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }  
+            });
+        });
     },
     deleteData: (db, id, callback) => {
         db.query("DELETE FROM surat WHERE id_surat = ?", id, callback);

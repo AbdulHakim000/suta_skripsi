@@ -7,7 +7,7 @@
           <h1>Edit Data Jaksa</h1>
       </div>
   </div>
-<form action="/jaksa/edit" method="POST">
+<form action="/jaksa/edit" method="POST" enctype="multipart/form-data">
 
 <div class="mb-3 mt-4">
   <input type="hidden" name="nip" class="form-control" value="<%= jaksa.nip %>" required >
@@ -26,7 +26,16 @@
   <option value="Pratama">Pratama</option>
   </select>
 </div>
-
+    <div class="form-group mt-4">
+      <label for="gambar_jaksa" class="form-label">Gambar Jaksa</label>
+      <!-- Display the current image as a preview -->
+      <div class="mb-3">
+        <img src="/images/jaksa/<%= jaksa.gambar_jaksa %>" alt="Gambar Jaksa" class="img-thumbnail" style="max-width: 200px;">
+      </div>
+      <input type="file" name="gambar_jaksa" class="form-control">
+      <!-- Hidden input to keep the old image value if a new one is not uploaded -->
+      <input type="hidden" name="old_gambar_jaksa" value="<%= jaksa.gambar_jaksa %>">
+    </div>
 <div mt-5>
   <button type="submit" class="btn btn-primary mt-4">Update</button>
 </div>

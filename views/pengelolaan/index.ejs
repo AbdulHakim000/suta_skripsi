@@ -115,7 +115,18 @@ function confirmDelete(event) {
     return false; // Prevent default link action
 }
 </script>
-
+<script>
+    <% if (message && message.type && message.text) { %>
+        Swal.fire({
+            position: 'center',
+            icon: '<%= message.type %>',  // 'success' or 'error'
+            title: '<%= message.text %>',
+            showConfirmButton: false,
+            timer: 2000  // Display for 2 seconds
+        });
+    <% } %>
+</script>
+  
   
 
 

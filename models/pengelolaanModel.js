@@ -11,15 +11,30 @@ module.exports = {
     getById: (db, id, callback) => {
         db.query("SELECT * FROM pengelolaan WHERE id = ", id, callback);
     },
-    insertData: (db, data, callback) => {
+    insertData: async (db, data) => {
         const { id, ...dataWithoutId } = data;
-        db.query("INSERT INTO pengelolaan SET ?", dataWithoutId, (err, result) => {
-            if (err) throw err;
-            callback(result);
+        // Mengembalikan Promise
+        return new Promise((resolve, reject) => {
+            db.query("INSERT INTO pengelolaan SET ?", dataWithoutId, (err, result) => {
+                if (err) {
+                    // Menolak Promise jika ada kesalahan
+                    return reject(err);
+                }
+                // Menyelesaikan Promise dengan hasil query
+                resolve(result);
+            });
         });
     },
-    updateData: (db, id, data, callback) => {
-        db.query("UPDATE pengelolaan SET ? WHERE id  = ?", [data, id], callback);
+    updateData: (db, id, data) => {
+        return new Promise((resolve, reject) => {
+            db.query("UPDATE pengelolaan SET ? WHERE id = ?", [data, id], (err, result) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(result);
+                }  
+            });
+        });
     },
     deleteData: (db, id, callback) => {
         db.query("DELETE FROM pengelolaan WHERE id = ?", id, callback);

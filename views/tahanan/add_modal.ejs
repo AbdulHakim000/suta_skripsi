@@ -12,7 +12,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <form action="/tahanan/add" method="POST" id="formTambahPembesuk">
+                <form action="/tahanan/add" enctype="multipart/form-data" method="POST" id="formTambahPembesuk">
                     <div class="form-group">
                         <label for="registrasi_tahanan">Registrasi Tahanan</label>
                         <input type="text" name="registrasi_tahanan" class="form-control" id="registrasi_tahanan" required>
@@ -77,7 +77,10 @@
                         <label for="tgl_surat_tuntutan">Tanggal Surat Tuntutan</label>
                         <input type="date" name="tgl_surat_tuntutan" class="form-control" id="tgl_surat_tuntutan" required>
                     </div>
-                    
+                    <div class="form-group">
+                        <label for="gambar_tahanan">Foto Tahanan</label>
+                        <input type="file" name="gambar_tahanan" accept="image/*" class="form-control" id="gambar_tahanan" required>
+                    </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

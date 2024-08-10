@@ -1,8 +1,19 @@
-<div class="card mt-5" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title"><%= jaksa.nama  %></h5>
-    <h6 class="card-subtitle mb-2 text-body-secondary"> <%= jaksa.nip %> </h6>
-    <p class="card-text"><%= jaksa.pangkat  %></p>
-    <a href="/jaksa/" class="card-link">Kembali</a>
+<div class="card mt-5 mx-auto shadow-lg" style="width: 100%; height: 400px;">
+  <div class="row g-0" style="height: 100%;">
+    <div class="col-md-4" style="height: 100%;">
+      <!-- Mengatur gambar agar sesuai dengan ukuran kotak dengan zoom -->
+      <img src="/images/jaksa/<%= jaksa.gambar_jaksa %>" 
+           class="img-fluid rounded-start " 
+           alt="<%= jaksa.nama %>" 
+           style="object-fit: cover; width: 100%; height: 100%; object-position: center;">
+    </div>
+    <div class="col-md-8" style="height: 100%;">
+      <div class="card-body d-flex flex-column justify-content-center" style="height: 100%;">
+        <h2 class="card-title"><%= jaksa.nama %></h2>
+        <h5 class="card-subtitle mb-2 text-body-secondary"><%= jaksa.nip %></h5>
+        <p class="card-text"><%= jaksa.pangkat %></p>
+        <a href="/jaksa/" class="card-link">Kembali</a>
+      </div>
+    </div>
   </div>
 </div>

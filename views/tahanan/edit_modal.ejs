@@ -12,7 +12,7 @@
 
 
 
-<form action="/tahanan/edit" method="POST">
+<form action="/tahanan/edit" method="POST" enctype="multipart/form-data">
 
 <div class="form-group">
                     
@@ -82,6 +82,17 @@
                     <div class="form-group">
                         <label for="tgl_surat_tuntutan">Tanggal Surat Tuntutan</label>
                         <input type="date" name="tgl_surat_tuntutan" class="form-control" id="tgl_surat_tuntutan" required value="<%= tahanan.tgl_surat_tuntutan  %>">
+                    </div>
+                    </div>
+                    <div class="form-group mt-4">
+                    <label for="gambar_tahanan" class="form-label">Gambar tahanan</label>
+                    <!-- Display the current image as a preview -->
+                    <div class="mb-3">
+                        <img src="/images/tahanan/<%= tahanan.gambar_tahanan %>" alt="Gambar Tahanan" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                    <input type="file" name="gambar_tahanan" class="form-control">
+                    <!-- Hidden input to keep the old image value if a new one is not uploaded -->
+                    <input type="hidden" name="old_gambar_tahanan" value="<%= tahanan.gambar_tahanan %>">
                     </div>
 
 <div mt-5>
