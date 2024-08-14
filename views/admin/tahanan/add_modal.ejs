@@ -1,0 +1,143 @@
+
+            <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-modal">
+        Tambah Data Tahanan
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="user-modal-area" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="add-modal-label">Tambah Data</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="/tahanan/add" enctype="multipart/form-data" method="POST" id="formTambahPembesuk">
+                    <div class="form-group">
+                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
+                        <input type="text" name="registrasi_tahanan" class="form-control" id="registrasi_tahanan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_tahanan">Nama Tahanan</label>
+                        <input type="text" name="nama_tahanan" class="form-control" id="nama_tahanan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tgl_lahir">Tanggal Lahir</label>
+                        <input type="date" name="tgl_lahir" class="form-control" id="tgl_lahir" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="tmp_lahir">Tempat Lahir</label>
+                        <input type="text" name="tmp_lahir" class="form-control" id="tmp_lahir" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <input type="text" name="provinsi" class="form-control" id="provinsi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kabupaten">Kabupaten</label>
+                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kecamatan">Kecamatan</label>
+                        <input type="text" name="kecamatan" class="form-control" id="kecamatan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kelurahan">Kelurahan / Desa</label>
+                        <textarea name="kelurahan" class="form-control" id="kelurahan" rows="4" cols="50" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="agama">Agama</label>
+                        <select name="agama" id="agama" class="form-control" required>
+                          <option value="-">--Agama--</option>
+                          <option value="Islam">Islam</option>
+                          <option value="Protestan">Protestan</option>
+                          <option value="Katolik">Katolik</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Budha">Budha</option>
+                          <option value="Konghucu">Konghucu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jns_kelamin">Jenis Kelamin</label>
+                        <select name="jns_kelamin" id="jns_kelamin" class="form-control" required>
+                          <option value="-">Jenis Kelamin</option>
+                          <option value="Laki-Laki">Laki-Laki</option>
+                          <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pekerjaan">Pekerjaan</label>
+                        <input type="text" name="pekerjaan" class="form-control" id="pekerjaan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pendidikan">Pendidikan</label>
+                        <select name="pendidikan" id="pendidikan" class="form-control" required>
+                          <option value="-">--Pendidikan--</option>
+                          <option value="SD">SD</option>
+                          <option value="SMP">SMP</option>
+                          <option value="SMA">SMA</option>
+                          <option value="D3">D3</option>
+                          <option value="S1">S1</option>
+                          <option value="S1">S2</option>
+                          <option value="S1">S3</option>
+                        </select> 
+                    </div>
+                    <div class="form-group">
+                        <label for="perkara">Perkara</label>
+                        <select name="perkara" id="perkara" class="form-control" required>
+                          <option value="-">--Perkara--</option>
+                          <option value="SD">SD</option>
+                          <option value="SMP">SMP</option>
+                          <option value="SMA">SMA</option>
+                          <option value="D3">D3</option>
+                          <option value="S1">S1</option>
+                          <option value="S1">S2</option>
+                          <option value="S1">S3</option>
+                        </select> 
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="kewarganegaraan">kewarganegaraan</label>
+                        <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tgl_surat_tuntutan">Tanggal Surat Tuntutan</label>
+                        <input type="date" name="tgl_surat_tuntutan" class="form-control" id="tgl_surat_tuntutan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gambar_tahanan">Foto Tahanan</label>
+                        <input type="file" name="gambar_tahanan" accept="image/*" class="form-control" id="gambar_tahanan" required>
+                    </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Simpan Data</button>
+              </div>
+              </form>
+
+
+
+            </div>
+          </div>
+        </div>
+        <script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>

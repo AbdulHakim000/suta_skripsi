@@ -5,10 +5,7 @@ const path = require('path');
 // const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const Swal = require('sweetalert2');
-const fileUpload = require('express-fileupload');
-const { v4: uuidv4 } = require('uuid');
-const multer = require('multer');
-const jaksaController = require('./controllers/jaksaController');
+const { isAuthenticated } = require('./middlewares/authMiddleware');
 
 
 const db = require('./database/conn');
@@ -30,6 +27,10 @@ const kabupatenRouter = require('./routes/kabupaten');
 const tahananRouter = require('./routes/tahanan');
 const pengajuanRouter = require('./routes/pengajuan');
 const pengelolaanRouter = require('./routes/pengelolaan');
+const userRouter = require('./routes/user');
+const lapasRouter = require('./routes/lapas');
+const loginRouter = require('./routes/login');
+const registerRouter = require('./routes/register');
 
 const app = express();
 const port  = 3000;
@@ -51,7 +52,8 @@ app.use((req, res, next) => {
 app.use(session({ 
   secret: 'secret', 
   resave: false, 
-  saveUninitialized: true 
+  saveUninitialized: true ,
+  cookie: { maxAge: 6000000 } // 1 menit
 }));
 app.use(flash());
 // app.use(flash2());
@@ -82,14 +84,62 @@ app.use(express.urlencoded( {extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/jaksa', jaksaRouter);
-app.use('/pembesuk', pembesukRouter);
-app.use('/surat', suratRouter);
-app.use('/provinsi', provinsiRouter);
-app.use('/kabupaten', kabupatenRouter);
-app.use('/tahanan', tahananRouter);
-app.use('/pengajuan', pengajuanRouter);
-app.use('/pengelolaan', pengelolaanRouter);
+
+
+// autentikasi user
+// Rute yang memerlukan autentikasi
+app.get('/', isAuthenticated, (req, res) => {
+    console.log('User session:', req.session.user);  // Debugging
+
+    const userRole = req.session.user.role; // Assuming role is stored in req.user
+
+    let layout;
+    if (userRole === 'admin') {
+        layout = 'layout/admin/main';
+    } else if (userRole === 'staff') {
+        layout = 'layout/staff/main';
+    } else {
+        layout = 'layout/public/main';
+    }
+
+    console.log('Layout:', layout);  // Debuggin
+    res.render('index', { 
+      user: req.session.user ,
+      layout: layout,
+      title: 'Halaman user',
+    });
+});
+// app.get('/jaksa', isAuthenticated, (req, res) => {
+//     console.log('User session:', req.session.user);  // Debugging
+//     res.render('jaksa/', { 
+//       user: req.session.user ,
+//       layout: 'layout/main',
+//       title: 'Halaman Jaksa',
+//     });
+// });
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Logout error:', err);
+            return res.status(500).send('Terjadi kesalahan saat logout.');
+        }
+        res.redirect('/login'); // Ganti dengan halaman yang sesuai setelah logout
+    });
+});
+app.use('/jaksa', isAuthenticated, jaksaRouter);
+app.use('/pembesuk',isAuthenticated, pembesukRouter);
+app.use('/surat',isAuthenticated, suratRouter);
+app.use('/provinsi',isAuthenticated, provinsiRouter);
+app.use('/kabupaten',isAuthenticated, kabupatenRouter);
+app.use('/tahanan',isAuthenticated, tahananRouter);
+app.use('/pengajuan',isAuthenticated, pengajuanRouter);
+app.use('/pengelolaan',isAuthenticated, pengelolaanRouter);
+app.use('/user',isAuthenticated, userRouter);
+app.use('/lapas',isAuthenticated, lapasRouter);
+app.use('/login', loginRouter);
+app.use('/register', registerRouter);
+
 
 // error handling middleware
 
@@ -130,5 +180,5 @@ app.use('/', (req, res) => {
     });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`app listening on port ${port}`)
 });

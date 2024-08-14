@@ -35,28 +35,44 @@ module.exports = {
         pengajuan.fetchData(req.db, (errpengajuan, rowsPengajuan) => {
             if (errpengajuan) {
                 req.flash('error', errpengajuan.message);
-                return res.render('pengajuan/index', { pengajuans: [], tahanans: [], pembesuks: [] });
+                return res.render('admin/pengajuan/index', { pengajuans: [], tahanans: [], pembesuks: [] });
             }
 
             // Ambil data tahanan
             pengajuan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
                 if (errTahanan) {
                     req.flash('error', errTahanan.message);
-                    return res.render('pengajuan/index', { pengajuans: rowsPengajuan, tahanans: [], pembesuks: [] });
+                    return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: [], pembesuks: [] });
                 }
 
                 // Ambil data pembesuk
                 pengajuan.fetchDataPembesuk(req.db, (errPembesuk, rowsPembesuk) => {
                     if (errPembesuk) {
                         req.flash('error', errPembesuk.message);
-                        return res.render('pengajuan/index', { pengajuans: rowsPengajuan, tahanans: rowsTahanan, pembesuks: [] });
+                        return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: rowsTahanan, pembesuks: [] });
+                    }
+
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+                    
+                    let viewName;  // Variabel untuk menentukan view yang akan dirender
+                    let layout;
+                        if (userRole === 'admin') {
+                            viewName = 'admin/pengajuan/index';
+                            layout = 'layout/admin/main';
+                        } else if (userRole === 'staff') {
+                            viewName = 'admin/pengajuan/index';
+                            layout = 'layout/staff/main';
+                        } else {
+                            viewName = 'public/pengajuan/index';
+                            layout = 'layout/public/main';
                     }
 
                     // Render view dengan ketiga data
-                    res.render('pengajuan/index', {
-                        layout: 'layout/main',
+                    res.render(viewName, {
+                        layout: layout,
                         title: 'Halaman pengajuan',
                         pengajuans: rowsPengajuan,
+                        userRole: req.session.user.role,
                         tahanans: rowsTahanan,
                         pembesuks: rowsPembesuk
                     });
@@ -69,13 +85,29 @@ module.exports = {
      pengajuan.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pengajuan/detail_modal', { data:''})
+            res.render('admin/pengajuan/detail_modal', { data:''})
         } else {
             const id = parseInt(req.params.id);
             const pengajuan = rows.find(pengajuan => pengajuan.id_pengajuan === id);
-            res.render('pengajuan/detail_modal', { 
-                layout: 'layout/main',
+
+            
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let viewName;
+            let layout;
+            if (userRole === 'admin') {
+                viewName = 'admin/pengajuan/detail_modal';
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                viewName = 'admin/pengajuan/detail_modal';
+                layout = 'layout/staff/main';
+            } else {
+                viewName = 'public/pengajuan/detail_modal';
+                layout = 'layout/public/main';
+            }
+            res.render(viewName, { 
+                layout: layout,
                 title: 'Halaman pengajuan',
+                userRole: req.session.user.role,
                 pengajuan, 
                 pengajuans: rows})
         }
@@ -86,13 +118,24 @@ module.exports = {
      pengajuan.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pengajuan/edit_modal', { data:''})
+            res.render('admin/pengajuan/edit_modal', { data:''})
         } else {
             const id = parseInt(req.params.id);
             const pengajuan = rows.find(pengajuan => pengajuan.id_pengajuan === id);
-            res.render('pengajuan/edit_modal', { 
-                layout: 'layout/main',
-                title: 'Halaman pengajuan',
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }           
+            res.render('admin/pengajuan/edit_modal', { 
+                layout: layout,
+                title: layout,
+                userRole: req.session.user.role,
                 pengajuan, 
                 pengajuans: rows})
         }
@@ -125,13 +168,6 @@ module.exports = {
                 gambar_ktp: req.file ? req.file.filename : null // Periksa apakah req.file berisi file
             };
 
-            // if (!/^\d{18,}$/.test(nip)) {
-            //     req.session.message = {
-            //         type: 'error',
-            //         text: 'NIP harus terdiri dari minimal 18 digit angka.'
-            //     };
-            //     return res.redirect('/pengajuan');
-            // }
 
             console.log(form_pengajuan);
 
@@ -180,47 +216,6 @@ module.exports = {
     });
     },
 
-    // update: async (req, res) => {
-    //     const {id_pengajuan, nik_pembesuk, nama_pembesuk, tmp_lahir_pembesuk, jns_kelamin_pembesuk, pekerjaan_pembesuk, provinsi, kabupaten, kecamatan, kelurahan, kewarganegaraan, registrasi_tahanan, nama_tahanan, hubungan, status} = req.body;
-
-    //     const form_pengajuan = {
-    //         id_pengajuan, 
-    //         nik_pembesuk, 
-    //         nama_pembesuk, 
-    //         tmp_lahir_pembesuk, 
-    //         jns_kelamin_pembesuk, 
-    //         pekerjaan_pembesuk, 
-    //         provinsi, 
-    //         kabupaten, 
-    //         kecamatan, 
-    //         kelurahan, 
-    //         kewarganegaraan, 
-    //         registrasi_tahanan, 
-    //         nama_tahanan, 
-    //         hubungan, 
-    //         status
-    //         }
-
-    //     console.log(form_pengajuan);
-
-    //     try {
-    //         // Mengupdate data dengan menggunakan async/await
-    //         await pengajuan.updateData(req.db, id_pengajuan, form_pengajuan);
-            
-    //         req.session.message = {
-    //             type: 'success',
-    //             text: 'Data berhasil terUpdate'
-    //         };
-    //         res.redirect('/pengajuan');
-    //     } catch (err) {
-    //         console.error('Error detail:', err);
-    //         req.session.message = {
-    //             type: 'error',
-    //             text: 'Terjadi kesalahan saat Mengupadte data: ' + err.message
-    //         };
-    //         res.redirect('/pengajuan');
-    //     }
-    // },
     update: async (req, res) => {
         const {id_pengajuan, nik_pembesuk, nama_pembesuk, tmp_lahir_pembesuk,   jns_kelamin_pembesuk, pekerjaan_pembesuk, provinsi, kabupaten, kecamatan, kelurahan, kewarganegaraan, registrasi_tahanan, nama_tahanan, hubungan, status, old_gambar_ktp} = req.body;
         // Check if a new image is uploaded

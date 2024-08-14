@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="card mx-auto mt-5" style="max-width: 120rem;">
+    <div class="card-body">
+      <div class="mb-4 ml-6">
+        <a href="/user">
+          <button type="button" class="btn btn-outline-danger">Kembali</button>
+        </a>
+      </div>
+      <div class="row">
+        <!-- Image section on the left -->
+        
+        <!-- Data section on the right -->
+        <div class="col-md-8 ms-4"> <!-- Tambahkan kelas ms-4 untuk memberikan margin start -->
+          <h5 class="card-title"><b>Username :</b> <%= user.username %></h5>
+          <h5 class="card-title"><b>Email :</b> <%= user.email %></h5>
+          <h5 class="card-title"><b>Password :</b> <%= user.password %></h5>
+          <h5 class="card-title"><b>Created At :</b> <%= user.created_at %></h5>
+          <h5 class="card-title"><b>Updated At :</b> <%= user.updated_at %></h5>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

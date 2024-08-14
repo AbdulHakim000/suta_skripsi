@@ -1,0 +1,38 @@
+
+<div class="container">
+  <div class="card mx-auto mt-5" style="max-width: 120rem;">
+    <div class="card-body">
+      <div class="mb-4 ml-6">
+        <a href="/pengajuan">
+          <button type="button" class="btn btn-outline-danger">Kembali</button>
+        </a>
+      </div>
+      <div class="row">
+        <!-- Image section on the left -->
+        <div class="col-md-4 text-center">
+          <img src="/images/pengajuan/<%= pengajuan.gambar_ktp %>" 
+              alt="<%= pengajuan.nama_pembesuk %>" 
+              style="width: 300px; height: 300px; object-fit: cover; object-position: center; border-radius: 5px;">
+        </div>
+        <!-- Data section on the right -->
+        <div class="col-md-8 ms-4"> <!-- Tambahkan kelas ms-4 untuk memberikan margin start -->
+              <h5 class="card-title"><b>NIK Pembesuk :</b> <%= pengajuan.nik_pembesuk %></h5>
+    <h5 class="card-title"><b>Nama Pembesuk :</b> <%= pengajuan.nama_pembesuk  %></h5>
+    <h5 class="card-title"><b>Tempat Lahir Pembesuk :</b> <%= pengajuan.tmp_lahir_pembesuk  %></h5>
+    <h5 class="card-title"><b>Jenis Kelamin Pembesuk :</b> <%= pengajuan.jns_kelamin_pembesuk  %></h5>
+    <h5 class="card-title"><b>Alamat Pembesuk :</b></h5>
+    <h7 class="card-title"><b>Provinsi :</b> <%= pengajuan.provinsi  %></h7><br>
+    <h7 class="card-title"><b>Kebupaten :</b> <%= pengajuan.kabupaten  %></h7><br>
+    <h7 class="card-title"><b>Kecamatan :</b> <%= pengajuan.kecamatan  %></h7><br>
+    <h7 class="card-title"><b>Kelurahan / Desa :</b> <%= pengajuan.kelurahan  %></h7><br>
+    <br>
+    <h5 class="card-title"><b>kewarganegaraan :</b> <%= pengajuan.kewarganegaraan  %></h5>
+    <h5 class="card-title"><b>Registrasi Tahanan :</b> <%= pengajuan.registrasi_tahanan %></h5>
+    <h5 class="card-title"><b>Nama Tahanan :</b> <%= pengajuan.nama_tahanan  %></h5>
+    <h5 class="card-title"><b>Hubungan :</b> <%= pengajuan.hubungan  %></h5>
+    <h5 class="card-title"><b>Status :</b> <%= pengajuan.status  %></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="card mx-auto mt-5" style="max-width: 120rem;">
+    <div class="card-body">
+      <div class="mb-4 ml-6">
+        <a href="/tahanan">
+          <button type="button" class="btn btn-outline-danger">Kembali</button>
+        </a>
+      </div>
+      <div class="row">
+        <!-- Image section on the left -->
+        <div class="col-md-4 text-center">
+          <img src="/images/tahanan/<%= tahanan.gambar_tahanan %>" 
+              alt="<%= tahanan.nama_tahanan %>" 
+              style="width: 300px; height: 300px; object-fit: cover; object-position: center; border-radius: 5px;">
+        </div>
+        <!-- Data section on the right -->
+        <div class="col-md-8 ms-4"> <!-- Tambahkan kelas ms-4 untuk memberikan margin start -->
+          <h5 class="card-title"><b>Nama Tahanan :</b> <%= tahanan.nama_tahanan %></h5>
+          <h5 class="card-title"><b>Registrasi Tahanan :</b> <%= tahanan.registrasi_tahanan %></h5>
+          <h5 class="card-title"><b>Jenis Kelamin :</b> <%= tahanan.jns_kelamin %></h5>
+          <h5 class="card-title"><b>Pekerjaan :</b> <%= tahanan.pekerjaan %></h5>
+          <h5 class="card-title"><b>Perkara :</b> <%= tahanan.perkara %></h5>
+          <h5 class="card-title"><b>Kewarganegaraan :</b> <%= tahanan.kewarganegaraan %></h5>
+          <h5 class="card-title"><b>Tanggal Surat Tuntutan :</b> <%= tahanan.tgl_surat_tuntutan %></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

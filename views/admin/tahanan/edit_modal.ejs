@@ -1,0 +1,140 @@
+<div class="container-fluid">
+  <a href="/tahanan">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data Tahanan testing</h1>
+      </div>
+  </div>
+
+  
+
+
+
+<form action="/tahanan/edit" method="POST" enctype="multipart/form-data">
+
+<div class="form-group">
+                    
+                    <div>
+                        <input type="hidden" name="id" class="form-control" id="registrasi_tahanan" required value="<%= tahanan.id  %>"> 
+                    </div>
+                    <div>
+                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
+                        <input type="text" name="registrasi_tahanan" class="form-control" id="registrasi_tahanan" required value="<%= tahanan.registrasi_tahanan  %>"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_tahanan">Nama Tahanan</label>
+                        <input type="text" name="nama_tahanan" class="form-control" id="nama_tahanan" required value="<%= tahanan.nama_tahanan  %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tgl_lahir">Tanggal Lahir Tahanan</label>
+                        <input type="date" name="tgl_lahir" class="form-control" id="tgl_lahir" required value="<%= new Date(tahanan.tgl_lahir).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }) %>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tmp_lahir">Tempat Lahir</label>
+                        <input type="text" name="tmp_lahir" class="form-control" id="tmp_lahir" required value="<%= tahanan.tmp_lahir  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <input type="text" name="provinsi" class="form-control" id="provinsi" required value="<%= tahanan.provinsi%>">
+                    </div>
+                    <div class="form-group">
+                        <label for="kabupaten">Kabupaten</label>
+                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required value="<%= tahanan.kabupaten  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="kecamatan">Kecamatan</label>
+                        <input type="text" name="kecamatan" class="form-control" id="kecamatan" required value="<%= tahanan.kecamatan %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="kelurahan">Kelurahan / Desa</label>
+                        <textarea name="kelurahan" class="form-control" id="kelurahan" rows="4" cols="50" required><%= tahanan.kelurahan  %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="agama">Agama</label>
+                        <select name="agama" id="agama" class="form-control" required>
+                          <option value="<%= tahanan.agama  %>"><%= tahanan.agama  %></option>
+                          <option value="Islam">Islam</option>
+                          <option value="Protestan">Protestan</option>
+                          <option value="Katolik">Katolik</option>
+                          <option value="Hindu">Hindu</option>
+                          <option value="Budha">Budha</option>
+                          <option value="Konghucu">Konghucu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jns_kelamin">Jenis Kelamin</label>
+                        <select name="jns_kelamin" id="jns_kelamin" class="form-control" required>
+                          <option value="<%= tahanan.jns_kelamin  %>"><%= tahanan.jns_kelamin %></option>
+                          <option value="Laki-Laki">Laki-Laki</option>
+                          <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pekerjaan">Pekerjaan</label>
+                        <input type="text" name="pekerjaan" class="form-control" id="pekerjaan" require value="<%= tahanan.pekerjaan  %>"d>
+                    </div>
+                    <div class="form-group">
+                        <label for="pendidikan">Pendidikan</label>
+                        <select name="pendidikan" id="pendidikan" class="form-control" required>
+                          <option value="<%= tahanan.pendidikan  %>"><%= tahanan.pendidikan  %></option>
+                          <option value="SD">SD</option>
+                          <option value="SMP">SMP</option>
+                          <option value="SMA">SMA</option>
+                          <option value="D3">D3</option>
+                          <option value="S1">S1</option>
+                          <option value="S1">S2</option>
+                          <option value="S1">S3</option>
+                        </select> 
+                    </div>
+                    <div class="form-group">
+                        <label for="perkara">Perkara</label>
+                        <input type="text" name="perkara" class="form-control" id="perkara" required value="<%= tahanan.perkara  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="kewarganegaraan">kewarganegaraan</label>
+                        <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required value="<%= tahanan.kewarganegaraan  %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="tgl_surat_tuntutan">Tanggal Surat Tuntutan</label>
+                        <input type="date" name="tgl_surat_tuntutan" class="form-control" id="tgl_surat_tuntutan" required value="<%= new Date(tahanan.tgl_surat_tuntutan).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }) %>">
+                    </div>
+                    <div class="form-group mt-4">
+                    <label for="gambar_tahanan" class="form-label">Gambar tahanan</label>
+                    <!-- Display the current image as a preview -->
+                    <div class="mb-3">
+                        <img src="/images/tahanan/<%= tahanan.gambar_tahanan %>" alt="Gambar Tahanan" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                    <input type="file" name="gambar_tahanan" class="form-control">
+                    <!-- Hidden input to keep the old image value if a new one is not uploaded -->
+                    <input type="hidden" name="old_gambar_tahanan" value="<%= tahanan.gambar_tahanan %>">
+                    </div>
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>
+
+<script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>

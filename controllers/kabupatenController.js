@@ -3,12 +3,21 @@ const kabupaten = require('../models/kabupatenModel');
 module.exports = {
     index: (req, res) => {
         kabupaten.fetchData(req.db, (err, rows) => {
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
             if (err) {
                 req.flash('error', err.message);
                 res.render('kabupaten/index', { data:'' });
             } else {
                 res.render('kabupaten/index', {
-                    layout: 'layout/main',
+                    layout: layout,
                     title: 'Halaman kabupaten',
                     kabupatens: rows
                 });
@@ -24,8 +33,18 @@ module.exports = {
         } else {
             const id = parseInt(req.params.id);
             const kabupaten = rows.find(kabupaten => kabupaten.id_kabupaten === id);
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
             res.render('kabupaten/detail_modal', { 
-                layout: 'layout/main',
+                layout: layout,
                 title: 'Halaman kabupaten',
                 kabupaten, 
                 kabupatens: rows})
@@ -41,8 +60,18 @@ module.exports = {
         } else {
             const id = parseInt(req.params.id);
             const kabupaten = rows.find(kabupaten => kabupaten.id === id);
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
             res.render('kabupaten/edit_modal', { 
-                layout: 'layout/main',
+                layout: layout,
                 title: 'Halaman kabupaten',
                 kabupaten, 
                 kabupatens: rows})

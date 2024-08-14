@@ -1,0 +1,85 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary bg-gradient">
+    <div class="container">
+  <a class="navbar-brand" href="/">SURAT BESUK DAN <br> PENGELOLAAN DATA TAHANAN</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse ml-5 d-flex" id="navbarNav">
+  <div class="collapse navbar-collapse ml-5 d-flex" id="navbarNav">
+
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/surat">Surat    <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/pengajuan">Pengajuan Surat    <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link" href="/pengelolaan">Kelola Tahanan    <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item mt-0">
+        <a class="nav-link" href="/tahanan">Tahanan    </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/pembesuk">Pembesuk    </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/jaksa" >Jaksa    </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/lapas" >Lapas    </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/user" >User    </a>
+      </li>
+      
+      <div class="btn-group">
+        <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
+          Alamat
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/provinsi">Provinsi</a></li>
+          <li><a class="dropdown-item" href="/kabupaten">Kabupaten</a></li>
+        </ul>
+      </div>
+      <li class="nav-item">
+        <a class="nav-link" href="/logout" id="logoutButton"><i class="bi bi-box-arrow-right"></i> </i></a>
+      </li>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
+        document.getElementById('logoutButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default button action
+
+            Swal.fire({
+                title: "Apakah Kamu Yakin?",
+                text: "Kamu akan logout dari akun ini!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Logout!",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Logged Out!",
+                        text: "Anda telah berhasil logout.",
+                        icon: "success"
+                    }).then(() => {
+                        // Redirect to logout URL after confirming
+                        window.location.href = '/logout';
+                    });
+                }
+            });
+        });
+    </script>
+

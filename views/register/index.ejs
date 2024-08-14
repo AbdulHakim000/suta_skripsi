@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="index2.css">
+</head>
+
+<body>
+
+    <body>
+        <section>
+            <div class="left-space title">
+
+           </div>
+            <div class="right-content">
+                <div class="form-box">
+
+                    <div class="form-value">
+                        <form action="/register/add" method="POST">
+                            <h2>Daftar</h2>
+                            <div class="inputbox"> 
+                                <ion-icon name="mail-outline"></ion-icon> 
+                                <input type="username" id="username" name="username" required>
+                                <label>Username</label>
+                            </div>
+                            <div class="inputbox"> 
+                                <ion-icon name="mail-outline"></ion-icon> 
+                                <input type="email" id="email" name="email" required>
+                                <label>Email</label>
+                            </div>
+                            <div class="inputbox"> <ion-icon name="lock-closed-outline"></ion-icon> 
+                                <input type="password" id="password" name="password" required> 
+                                <label>Password</label>
+                            </div>
+                            
+                                <input type="hidden" id="role" name="role" required value="public"> 
+                                <button>Daftar</button>
+                            <div class="register">
+                                <p>Sudah Punya Akun? Silahkan <a href="login">Login</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section> 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    <% if (message && message.type && message.text) { %>
+        Swal.fire({
+            position: 'center',
+            icon: '<%= message.type %>',  // 'success' or 'error'
+            title: '<%= message.text %>',
+            showConfirmButton: false,
+            timer: 2000  // Display for 2 seconds
+        });
+    <% } %>
+</script>
+</body>
+
+</html>

@@ -32,19 +32,28 @@ module.exports = {
 
     index: (req, res) => {
         jaksa.fetchData(req.db, (err, rows) => {
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
             if (err) {
                 req.flash('error', err.message);
-                res.render('jaksa/index', {
-                    layout: 'layouts/main',
+                res.render('admin/jaksa/index', {
+                    layout: layout,
                     title: 'Halaman jaksa',
                     jaksas: '',
-                    messages: req.flash()
                 });
             } else {
-                res.render('jaksa/index', {
-                    layout: 'layout/main',
+                res.render('admin/jaksa/index', {
+                    layout: layout,
                     title: 'Halaman jaksa',
                     jaksas: rows,
+                    userRole: req.session.user.role,
                     messages: req.flash()
                 });
             }
@@ -55,14 +64,26 @@ module.exports = {
      jaksa.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('jaksa/detail_modal', { data:''})
+            res.render('admin/jaksa/detail_modal', { data:''})
         } else {
             const nip = req.params.nip;
             const jaksa = rows.find(jaksa => jaksa.nip === nip);
-            res.render('jaksa/detail_modal', { 
-                layout: 'layout/main',
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+
+            res.render('admin/jaksa/detail_modal', { 
+                layout: layout,
                 title: 'Halaman jaksa',
                 jaksa, 
+                userRole: req.session.user.role,
                 jaksas: rows})
         }
     });
@@ -72,21 +93,30 @@ module.exports = {
         jaksa.fetchData(req.db, (err, rows) => {
             if (err) {
                 req.flash('error', err.message); 
-                res.render('jaksa/edit_modal', { data:''})
+                res.render('admin/jaksa/edit_modal', { data:''})
             } else {
                 const nip = req.params.nip;
 
                 console.log(nip);
                 const jaksa = rows.find(j => j.nip === nip);
-                res.render('jaksa/edit_modal', { 
-                    layout: 'layout/main',
+
+                const userRole = req.session.user.role; // Assuming role is stored in req.user
+                let layout;
+                if (userRole === 'admin') {
+                    layout = 'layout/admin/main';
+                } else if (userRole === 'staff') {
+                    layout = 'layout/staff/main';
+                } else {
+                    layout = 'layout/public/main';
+                }
+                res.render('admin/jaksa/edit_modal', { 
+                    layout: layout,
                     title: 'Halaman jaksa',
                     jaksa, 
+                    userRole: req.session.user.role,
                     jaksas: rows})
             }
         });
-
-        
     }  ,
 
 

@@ -2,6 +2,14 @@ module.exports = {
     fetchData: (db, callback) => {
         db.query("SELECT * FROM surat", callback);
     },
+    fetchDataWithTahanan: (db, callback) => {
+    const query = `
+        SELECT surat.*, tahanan.nama_tahanan 
+        FROM surat 
+        JOIN tahanan ON surat.registrasi_tahanan = tahanan.registrasi_tahanan
+    `;
+    db.query(query, callback);
+    },
     fetchDataTahanan: (db, callback) => {
         db.query("SELECT * FROM tahanan", callback);
     },

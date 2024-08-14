@@ -1,28 +1,24 @@
 const provinsi = require('../models/provinsiModel');
 
 module.exports = {
-    // index: (req, res) => {
-    //  provinsi.fetchData(req.db, (err, rows) => {
-    //     if (err) {
-    //         req.flash('error', err.message); 
-    //         res.render('provinsi/index', { data:''})
-    //     } else {
-    //         res.render('provinsi/index', { 
-    //             layout: 'layout/main',
-    //             title: 'Halaman provinsi',
-    //             provinsis: rows})
-    //     }
-    // });
-    // },
 
     index: (req, res) => {
+        const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
         provinsi.fetchData(req.db, (err, rows) => {
             if (err) {
                 req.flash('error', err.message);
                 res.render('provinsi/index', { data:'' });
             } else {
                 res.render('provinsi/index', {
-                    layout: 'layout/main',
+                    layout: layout,
                     title: 'Halaman provinsi',
                     provinsis: rows
                 });
@@ -31,6 +27,15 @@ module.exports = {
     },
 
     detail: (req, res) => {
+    const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
      provinsi.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
@@ -39,7 +44,7 @@ module.exports = {
             const id = parseInt(req.params.id);
             const provinsi = rows.find(provinsi => provinsi.id_provinsi === id);
             res.render('provinsi/detail_modal', { 
-                layout: 'layout/main',
+                layout: layout,
                 title: 'Halaman provinsi',
                 provinsi, 
                 provinsis: rows})
@@ -55,8 +60,18 @@ module.exports = {
         } else {
             const id = parseInt(req.params.id);
             const provinsi = rows.find(provinsi => provinsi.id === id);
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
             res.render('provinsi/edit_modal', { 
-                layout: 'layout/main',
+                layout: layout,
                 title: 'Halaman provinsi',
                 provinsi, 
                 provinsis: rows})

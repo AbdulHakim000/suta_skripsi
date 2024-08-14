@@ -34,24 +34,36 @@ module.exports = {
         pengelolaan.fetchData(req.db, (errPengelolaan, rowsPengelolaan) => {
             if (errPengelolaan) {
                 req.flash('error', errPengelolaan.message);
-                return res.render('pengelolaan/index', { pengelolaans: [], tahananas: [] });
+                return res.render('admin/pengelolaan/index', { pengelolaans: [], tahananas: [] });
             } 
             // ambil data tahanan
             pengelolaan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
                 if (errTahanan) {
                     req.flash('error', errTahanan.message);
-                    return res.render('pengelolaan/index', { pengelolaans: rowsPengelolaan, tahanans: [] });
+                    return res.render('admin/pengelolaan/index', { pengelolaans: rowsPengelolaan, tahanans: [] });
                 }
                 // ambil data jaksa
                 pengelolaan.fetchDataJaksa(req.db, (errJaksa, rowsJaksa) => {
                     if (errJaksa) {
                         req.flash('error', errJaksa.message);
-                        return res.render('pengelolaan/index', { pengelolaans: rowsPengelolaan, tahanans: rowsTahanan, jaksa: [] });
+                        return res.render('admin/pengelolaan/index', { pengelolaans: rowsPengelolaan, tahanans: rowsTahanan, jaksa: [] });
+                    }
+
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+                    let layout;
+                    
+                    if (userRole === 'admin') {
+                        layout = 'layout/admin/main';
+                    } else if (userRole === 'staff') {
+                        layout = 'layout/staff/main';
+                    } else {
+                        layout = 'layout/public/main';
                     }
                     // render view dengan ketiga data
-                        res.render('pengelolaan/index', {
-                            layout: 'layout/main',
+                        res.render('admin/pengelolaan/index', {
+                            layout: layout,
                             title: 'Halaman pengelolaan',
+                            userRole: req.session.user.role,
                             pengelolaans: rowsPengelolaan,
                             tahanans: rowsTahanan,
                             jaksas: rowsJaksa
@@ -65,13 +77,24 @@ module.exports = {
      pengelolaan.fetchJoinedData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pengelolaan/detail_modal', { data:''})
+            res.render('admin/pengelolaan/detail_modal', { data:''})
         } else {
             const id = parseInt(req.params.id);
             const pengelolaan = rows.find(pengelolaan => pengelolaan.id === id);
-            res.render('pengelolaan/detail_modal', { 
-                layout: 'layout/main',
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+            res.render('admin/pengelolaan/detail_modal', { 
+                layout: layout,
                 title: 'Halaman pengelolaan',
+                userRole: req.session.user.role,
                 pengelolaan, 
                 pengelolaans: rows})
         }
@@ -84,27 +107,37 @@ module.exports = {
         pengelolaan.fetchData(req.db, (errPengelolaan, rowsPengelolaan) => {
             if (errPengelolaan) {
                 req.flash('error', errPengelolaan.message);
-                return res.render('pengelolaan/edit_modal', { pengelolaans: [], tahananas: [] });
+                return res.render('admin/pengelolaan/edit_modal', { pengelolaans: [], tahananas: [] });
             } 
             // ambil data tahanan
             pengelolaan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
                 if (errTahanan) {
                     req.flash('error', errTahanan.message);
-                    return res.render('pengelolaan/edit_modal', { pengelolaans: rowsPengelolaan, tahanans: [] });
+                    return res.render('admin/pengelolaan/edit_modal', { pengelolaans: rowsPengelolaan, tahanans: [] });
                 }
                 // ambil data jaksa
                 pengelolaan.fetchDataJaksa(req.db, (errJaksa, rowsJaksa) => {
                     if (errJaksa) {
                         req.flash('error', errJaksa.message);
-                        return res.render('pengelolaan/edit_modal', { pengelolaans: rowsPengelolaan, tahanans: rowsTahanan, jaksa: [] });
+                        return res.render('admin/pengelolaan/edit_modal', { pengelolaans: rowsPengelolaan, tahanans: rowsTahanan, jaksa: [] });
                     }
                     const id = parseInt(req.params.id);
                     const pengelolaan = rowsPengelolaan.find(pengelolaan =>  pengelolaan.id === id);
                     // render view dengan ketiga data
-                        res.render('pengelolaan/edit_modal', {
-                            layout: 'layout/main',
+                        const userRole = req.session.user.role; // Assuming role is stored in req.user
+                        let layout;
+                        if (userRole === 'admin') {
+                            layout = 'layout/admin/main';
+                        } else if (userRole === 'staff') {
+                            layout = 'layout/staff/main';
+                        } else {
+                            layout = 'layout/public/main';
+                        }
+                        res.render('admin/pengelolaan/edit_modal', {
+                            layout: layout,
                             title: 'Halaman pengelolaan',
                             pengelolaan,
+                            userRole: req.session.user.role,
                             pengelolaans: rowsPengelolaan,
                             tahanans: rowsTahanan,
                             jaksas: rowsJaksa
@@ -114,42 +147,6 @@ module.exports = {
     });
     },
 
-    // add: async (req, res) => {
-    //         const {registrasi_perkara, registrasi_tahanan, kronologi, jaksa1, jaksa2, jaksa3, jaksa4, barang_bukti, melanggar_pasal, lapas, durasi_penahanan, tgl_penuntutan} = req.body;
-    //         const form_pengelolaan = {
-    //             registrasi_perkara, 
-    //             registrasi_tahanan, 
-    //             kronologi, 
-    //             jaksa1, 
-    //             jaksa2, 
-    //             jaksa3, 
-    //             jaksa4, 
-    //             barang_bukti,
-    //             melanggar_pasal, 
-    //             lapas, 
-    //             durasi_penahanan, 
-    //             tgl_penuntutan
-    //         }
-    //     try {
-    //         console.log(form_pengelolaan);
-
-    //         // Menyimpan data ke database
-    //         await pengelolaan.insertData(req.db, form_pengelolaan);
-
-    //         req.session.message = {
-    //             type: 'success',
-    //             text: 'Data berhasil dimasukkan ke database'
-    //         };
-    //         res.redirect('/pengelolaan');
-    //     } catch (err) {
-    //         console.error('Error detail:', err);
-    //         req.session.message = {
-    //             type: 'error',
-    //             text: 'Terjadi kesalahan saat memasukkan data: ' + err.message
-    //         };
-    //         res.redirect('/pengelolaan');
-    //     }
-    // },
     add : async (req, res) => {
         try {
             console.log('File received:', req.file); // Periksa apakah file diterima
@@ -221,44 +218,6 @@ addFoto : (req, res, next) => {
     });
     },
     
-
-// update: async (req, res) => {
-//     const {id, registrasi_perkara, registrasi_tahanan, kronologi, jaksa1, jaksa2, jaksa3, jaksa4, barang_bukti, melanggar_pasal, lapas, durasi_penahanan, tgl_penuntutan} = req.body;
-//     const form_pengelolaan = {
-//         id,
-//         registrasi_perkara, 
-//         registrasi_tahanan, 
-//         kronologi, 
-//         jaksa1, 
-//         jaksa2, 
-//         jaksa3, 
-//         jaksa4, 
-//         barang_bukti, 
-//         melanggar_pasal, 
-//         lapas, 
-//         durasi_penahanan, 
-//         tgl_penuntutan
-//         }
-//         console.log(form_pengelolaan);
-
-//         try {
-//             // Mengupdate data dengan menggunakan async/await
-//             await pengelolaan.updateData(req.db, id, form_pengelolaan);
-            
-//             req.session.message = {
-//                 type: 'success',
-//                 text: 'Data berhasil terUpdate'
-//             };
-//             res.redirect('/pengelolaan');
-//         } catch (err) {
-//             console.error('Error detail:', err);
-//             req.session.message = {
-//                 type: 'error',
-//                 text: 'Terjadi kesalahan saat Mengupadte data: ' + err.message
-//             };
-//             res.redirect('/pengelolaan');
-//         }
-//     },
 
         update: async (req, res) => {
                 const {id, registrasi_perkara, registrasi_tahanan, kronologi, jaksa1, jaksa2, jaksa3, jaksa4, barang_bukti, melanggar_pasal, lapas, durasi_penahanan, tgl_penuntutan, old_gambar_barbuk} = req.body;

@@ -1,0 +1,133 @@
+<div class="container-fluid">
+  <a href="/pengelolaan">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data Pengelolaan</h1>
+      </div>
+  </div>
+
+  
+
+
+
+<form action="/pengelolaan/edit" method="POST" enctype="multipart/form-data">
+
+<div class="form-group">
+                    <div class="form-group">
+                        <input type="hidden" name="id" class="form-control" id="id" required value="<%= pengelolaan.id %>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registrasi_perkara">Registrasi perkara</label>
+                        <input type="text" name="registrasi_perkara" class="form-control" id="registrasi_perkara" required value="<%= pengelolaan.registrasi_perkara %>"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="registrasi_tahanan">Registrasi tahanan</label>
+                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control ch">
+                            <option value="<%= pengelolaan.registrasi_tahanan %>"><%= pengelolaan.registrasi_tahanan %></option>
+                            <% tahanans.forEach(tahanan => { %>
+                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="kronologi">Kronologi</label>
+                        <input type="text" name="kronologi" class="form-control" id="kronologi" required value="<%= pengelolaan.kronologi %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa1">Jaksa 1</label>
+                        <select name="jaksa1" id="jaksa1" class="form-control">
+                            <option value="<%= pengelolaan.jaksa1 %>"><%= pengelolaan.jaksa1 %></option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa2">Jaksa 2</label>
+                        <select name="jaksa2" id="jaksa2" class="form-control">
+                            <option value="<%= pengelolaan.jaksa2 %>"><%= pengelolaan.jaksa2 %></option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa3">Jaksa 3</label>
+                        <select name="jaksa3" id="jaksa3" class="form-control">
+                            <option value="<%= pengelolaan.jaksa3 %>"><%= pengelolaan.jaksa3 %></option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="jaksa4">Jaksa 4</label>
+                        <select name="jaksa4" id="jaksa4" class="form-control">
+                            <option value="<%= pengelolaan.jaksa4 %>"><%= pengelolaan.jaksa4 %></option>
+                            <% jaksas.forEach(jaksa => { %>
+                            <option value="<%= jaksa.nama %>"><%= jaksa.nama %></option> 
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="barang_bukti">barang bukti</label>
+                        <textarea name="barang_bukti" id="barang_bukti" class="form-control"><%= pengelolaan.barang_bukti %></textarea>
+                    </div>
+                    <div class="form-group mt-4">
+                    <label for="gambar_barbuk" class="form-label">Gambar Barang Bukti</label>
+                    <!-- Display the current image as a preview -->
+                    <div class="mb-3">
+                        <img src="/images/barang_bukti/<%= pengelolaan.gambar_barbuk %>" alt="Gambar Barang Bukti" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                    <input type="file" name="gambar_barbuk" class="form-control">
+                    <!-- Hidden input to keep the old image value if a new one is not uploaded -->
+                    <input type="hidden" name="old_gambar_barbuk" value="<%= pengelolaan.gambar_barbuk %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="melanggar_pasal">Melangga Pasal</label>
+                        <textarea name="melanggar_pasal" id="melanggar_pasal" class="form-control"><%= pengelolaan.melanggar_pasal %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lapas">Lapas</label>
+                        <select name="lapas" id="lapas" class="form-control">
+                            <option value="<%= pengelolaan.lapas %>"><%= pengelolaan.lapas %></option>
+                            <option value="a">a</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="durasi_penahanan">Durasi Penahanan</label>
+                        <input type="text" name="durasi_penahanan" class="form-control" id="durasi_penahanan" required value="<%= pengelolaan.durasi_penahanan %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="tgl_penuntutan">Tanggal Penuntutan</label>
+                        <input type="date" name="tgl_penuntutan" class="form-control" id="tgl_penuntutan" required value="<%= new Date(pengelolaan.tgl_penuntutan).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }) %>">
+                    </div>
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>
+
+<script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>

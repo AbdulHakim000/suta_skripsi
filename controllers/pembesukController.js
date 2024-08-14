@@ -2,13 +2,24 @@ const pembesuk = require('../models/pembesukModel');
 
 module.exports = {
     index: (req, res) => {
+
+    const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
      pembesuk.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pembesuk/index', { data:''})
+            res.render('admin/pembesuk/index', { data:''})
         } else {
-            res.render('pembesuk/index', { 
-                layout: 'layout/main',
+            res.render('admin/pembesuk/index', { 
+                layout: layout,
+                userRole: req.session.user.role,
                 title: 'Halaman Pembesuk',
                 pembesuks: rows})
         }
@@ -19,13 +30,24 @@ module.exports = {
      pembesuk.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pembesuk/detail_modal', { data:''})
+            res.render('admin/pembesuk/detail_modal', { data:''})
         } else {
             const nik = parseInt(req.params.nik);
             const pembesuk = rows.find(pembesuk => pembesuk.nik === nik);
-            res.render('pembesuk/detail_modal', { 
-                layout: 'layout/main',
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+            res.render('admin/pembesuk/detail_modal', { 
+                layout: layout,
                 title: 'Halaman Pembesuk',
+                userRole: req.session.user.role,
                 pembesuk, 
                 pembesuks: rows})
         }
@@ -36,13 +58,23 @@ module.exports = {
      pembesuk.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('pembesuk/edit_modal', { data:''})
+            res.render('admin/pembesuk/edit_modal', { data:''})
         } else {
             const nik = parseInt(req.params.nik);
             const pembesuk = rows.find(pembesuk => pembesuk.nik === nik);
-            res.render('pembesuk/edit_modal', { 
-                layout: 'layout/main',
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+            res.render('admin/pembesuk/edit_modal', { 
+                layout: layout,
                 title: 'Halaman Pembesuk',
+                userRole: req.session.user.role,
                 pembesuk, 
                 pembesuks: rows})
         }

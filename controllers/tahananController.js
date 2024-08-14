@@ -31,14 +31,30 @@ const uploadTahanan = multer({
 
 module.exports = {
     index: (req, res) => {
+
+        const userRole = req.session.user.role; // Assuming role is stored in req.user
+         
+        let viewName;
+        let layout;
+            if (userRole === 'admin') {
+                viewName = 'admin/tahanan/index';
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                viewName = 'admin/tahanan/index';
+                layout = 'layout/staff/main';
+            } else {
+                viewName = 'public/tahanan/index';
+                layout = 'layout/public/main';
+            }
         tahanan.fetchData(req.db, (err, rows) => {
             if (err) {
                 req.flash('error', err.message);
-                res.render('tahanan/index', { data:'' });
+                res.render(viewName, { data:'' });
             } else {
-                res.render('tahanan/index', {
-                    layout: 'layout/main',
+                res.render(viewName, {
+                    layout: layout,
                     title: 'Halaman tahanan',
+                    userRole: req.session.user.role,
                     tahanans: rows
                 });
             }
@@ -49,13 +65,28 @@ module.exports = {
      tahanan.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('tahanan/detail_modal', { data:''})
+            res.render('admin/tahanan/detail_modal', { data:''})
         } else {
             const id = parseInt(req.params.id);
             const tahanan = rows.find(tahanan => tahanan.id === id);
-            res.render('tahanan/detail_modal', { 
-                layout: 'layout/main',
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let viewName;
+            let layout;
+            if (userRole === 'admin') {
+                viewName = 'admin/tahanan/detail_modal';
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                viewName = 'admin/tahanan/detail_modal';
+                layout = 'layout/staff/main';
+            } else {
+                viewName = 'public/tahanan/detail_modal';
+                layout = 'layout/public/main';
+            }
+            res.render(viewName, { 
+                layout: layout,
                 title: 'Halaman tahanan',
+                userRole: req.session.user.role,
                 tahanan, 
                 tahanans: rows})
         }
@@ -66,14 +97,25 @@ module.exports = {
      tahanan.fetchData(req.db, (err, rows) => {
         if (err) {
             req.flash('error', err.message); 
-            res.render('tahanan/edit_modal', { data:''})
+            res.render('admin/tahanan/edit_modal', { data:''})
         } else {
             const id = parseInt(req.params.id);
             const tahanan = rows.find(tahanan => tahanan.id === id);
-            res.render('tahanan/edit_modal', { 
-                layout: 'layout/main',
+
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+            res.render('admin/tahanan/edit_modal', { 
+                layout: layout,
                 title: 'Halaman tahanan',
                 tahanan, 
+                userRole: req.session.user.role,
                 tahanans: rows})
         }
     });
@@ -204,49 +246,6 @@ module.exports = {
             res.redirect('/tahanan');
         }
     },
-
-    // update: async (req, res) => {
-    //     const {id, registrasi_tahanan,nama_tahanan, tgl_lahir,  tmp_lahir, provinsi, kabupaten, kecamatan, kelurahan, agama, jns_kelamin, pekerjaan, pendidikan, perkara, kewarganegaraan, tgl_surat_tuntutan} = req.body;
-    //     const form_tahanan = {
-    //         id,
-    //         registrasi_tahanan,
-    //         nama_tahanan, 
-    //         tgl_lahir,  
-    //         tmp_lahir, 
-    //         provinsi, 
-    //         kabupaten, 
-    //         kecamatan, 
-    //         kelurahan, 
-    //         agama, 
-    //         jns_kelamin, 
-    //         pekerjaan, 
-    //         pendidikan, 
-    //         perkara, 
-    //         kewarganegaraan, 
-    //         tgl_surat_tuntutan
-    //         }
-
-    //     console.log(form_tahanan);
-
-    //     try {
-    //         // Mengupdate data dengan menggunakan async/await
-    //         await tahanan.updateData(req.db, id, form_tahanan);
-            
-    //         req.session.message = {
-    //             type: 'success',
-    //             text: 'Data berhasil terUpdate'
-    //         };
-    //         res.redirect('/tahanan');
-    //     } catch (err) {
-    //         console.error('Error detail:', err);
-    //         req.session.message = {
-    //             type: 'error',
-    //             text: 'Terjadi kesalahan saat Mengupadte data: ' + err.message
-    //         };
-    //         res.redirect('/tahanan');
-    //     }
-    // },
-
 
     delete : (req, res) => {
         const id = parseInt(req.params.id); // Mengambil id dari parameter URL

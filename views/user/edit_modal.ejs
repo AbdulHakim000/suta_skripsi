@@ -1,0 +1,69 @@
+<div class="container-fluid">
+  <a href="/user">
+    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
+  </a>
+  <div class="row mt-4 text-center ">
+      <div class="md-12 text-center">
+          <h1>Edit Data User</h1>
+      </div>
+  </div>
+
+  
+
+
+
+<form action="/user/edit" method="POST" >
+
+<div class="form-group">
+                    
+                    <div>
+                        <input type="hidden" name="id" class="form-control" id="id" required value="<%= user.id  %>"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" name="username" class="form-control" id="username"  value="<%= user.username  %>"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="text" name="email" class="form-control" id="email"  value="<%= user.email  %>"required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" class="form-control" id="password">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select name="role" id="role" class="form-control">
+                            <option value="<%= user.role  %>"><%= user.role  %></option>
+                            <option value="admin">Admin</option>
+                            <option value="staff">Staff</option>
+                            <option value="public">Public</option>
+                        </select>
+                    </div>
+                
+
+<div mt-5>
+  <button type="submit" class="btn btn-primary mt-4">Update</button>
+</div>
+</form>
+</div>
+
+<script>
+            // Fungsi untuk format tanggal dan waktu
+            function formatDate(date) {
+                let day = String(date.getDate()).padStart(2, '0');
+                let month = String(date.getMonth() + 1).padStart(2, '0'); // Januari adalah 0
+                let year = date.getFullYear();
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                let seconds = String(date.getSeconds()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const now = new Date();
+                const formattedDate = formatDate(now);
+                document.getElementById('pembuatan').value = formattedDate;
+            });
+        </script>
