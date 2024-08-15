@@ -72,6 +72,7 @@ module.exports = {
                         layout: layout,
                         title: 'Halaman pengajuan',
                         pengajuans: rowsPengajuan,
+                        user: req.session.user,
                         userRole: req.session.user.role,
                         tahanans: rowsTahanan,
                         pembesuks: rowsPembesuk
@@ -107,6 +108,7 @@ module.exports = {
             res.render(viewName, { 
                 layout: layout,
                 title: 'Halaman pengajuan',
+                user: req.session.user,
                 userRole: req.session.user.role,
                 pengajuan, 
                 pengajuans: rows})
@@ -135,6 +137,7 @@ module.exports = {
             res.render('admin/pengajuan/edit_modal', { 
                 layout: layout,
                 title: layout,
+                user: req.session.user,
                 userRole: req.session.user.role,
                 pengajuan, 
                 pengajuans: rows})

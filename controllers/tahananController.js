@@ -55,6 +55,38 @@ module.exports = {
                     layout: layout,
                     title: 'Halaman tahanan',
                     userRole: req.session.user.role,
+                    user: req.session.user,
+                    tahanans: rows
+                });
+            }
+        });
+    },
+    tambah: (req, res) => {
+
+        const userRole = req.session.user.role; // Assuming role is stored in req.user
+         
+        let viewName;
+        let layout;
+            if (userRole === 'admin') {
+                viewName = 'admin/tahanan/add_modal';
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                viewName = 'admin/tahanan/add_modal';
+                layout = 'layout/staff/main';
+            } else {
+                viewName = 'public/tahanan/add_modal';
+                layout = 'layout/public/main';
+            }
+        tahanan.fetchData(req.db, (err, rows) => {
+            if (err) {
+                req.flash('error', err.message);
+                res.render(viewName, { data:'' });
+            } else {
+                res.render(viewName, {
+                    layout: layout,
+                    title: 'Halaman tahanan',
+                    userRole: req.session.user.role,
+                    user: req.session.user,
                     tahanans: rows
                 });
             }
@@ -87,6 +119,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman tahanan',
                 userRole: req.session.user.role,
+                user: req.session.user,
                 tahanan, 
                 tahanans: rows})
         }
@@ -116,6 +149,7 @@ module.exports = {
                 title: 'Halaman tahanan',
                 tahanan, 
                 userRole: req.session.user.role,
+                user: req.session.user,
                 tahanans: rows})
         }
     });

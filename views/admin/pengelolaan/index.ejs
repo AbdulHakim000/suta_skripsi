@@ -1,47 +1,41 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
-<!-- datatables -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.bootstrap5.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 
-<!-- Contoh menggunakan CDN untuk jQuery dan DataTables -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    </head>
-    <body>
-        <div class="container-fluid">
-            <div class="row mt-4">
-                <div class="md-12 text-center">
-                    <h1>Data pengelolaan</h1>
-                </div>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <h1>Data Pengelolaan Tahanan</h1>
             </div>
-            <div class="row mt-2">
-                <div class="md-12">
-                    <% if (messages.error) { %>
-                        <div class="alert alert-danger"><%= messages.error%></div>
-                    <% } %>
-                    <% if (messages.success) { %>
-                        <div class="alert alert-success"><%= messages.success%></div>
-                    <% } %>
-
-                </div>
+        </div>
+    
+        <div class="row mt-2">
+            <div class="col-md-12">
+                <a href="/pengelolaan/tambah">
+                <button type="button" class="btn btn-primary mt-4">Tambah Data</button>
+                </a>
             </div>
-        
-            <div class="row mt-2">
-                <div class="md-12">
-                   <%-include('add_modal.ejs')%> 
-                </div>
-            </div>
-
-            <div class="row mt-2">
-                <div class="md-12">
+        </div>
+    
+        <div class="row mt-2">
+            <div class="col-md-12">
 
                    <table id="tablepengelolaan" class="table table-striped" style="width:100%"> 
                     <thead>
@@ -65,7 +59,9 @@
                                 <td><%= pengelolaan.lapas  %></td>
                                 <td><%= pengelolaan.durasi_penahanan  %></td>
                                 <td>
-                                    <a href="/pengelolaan/edit/<%= pengelolaan.id %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    <a href="/pengelolaan/edit/<%= pengelolaan.id %>" class="btn btn-warning badge rounded-pill" style="color: white;">
+  <i class="bi bi-pencil-square"></i> Edit
+</a>
                                     <% if (userRole === 'admin') { %>  <!-- Only render delete button for admin -->
                                     <a href="/pengelolaan/delete/<%= pengelolaan.id %>" onclick="return confirmDelete(event)">
                                         <button class="btn btn-danger badge rounded-pill">
@@ -80,67 +76,71 @@
                             <% }) %>
                     </tbody>
                    </table>
-                </div>
+                
+
+
             </div>
         </div>
+    </div>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
- 
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault();
+            const nip = event.currentTarget.getAttribute('href').split('/').pop();
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-function confirmDelete(event) {
-    event.preventDefault(); // Prevent default link action
-
-    const id = event.currentTarget.getAttribute('href').split('/').pop(); // Mendapatkan id dari href
-
-    Swal.fire({
-        title: "Apakah Kamu Yakin?",
-        text: "Data ini akan terhapus selamanya!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, Hapus!"
-    }).then((result) => {
-        if (result.isConfirmed) {
             Swal.fire({
-                title: "Terhapus!",
-                text: "Data pengelolaan Berhasil DiHapus.",
-                icon: "success"
-            }).then(() => {
-                // Redirect to delete URL after confirming
-                window.location.href = `/pengelolaan/delete/${id}`;
+                title: "Apakah Kamu Yakin?",
+                text: "Data ini akan terhapus selamanya!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Hapus!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Terhapus!",
+                        text: "Data pengelolaan Berhasil DiHapus.",
+                        icon: "success"
+                    }).then(() => {
+                        window.location.href = `/pengelolaan/delete/${nip}`;
+                    });
+                }
             });
+
+            return false;
         }
-    });
+    </script>
 
-    return false; // Prevent default link action
-}
-</script>
-<script>
-    <% if (message && message.type && message.text) { %>
-        Swal.fire({
-            position: 'center',
-            icon: '<%= message.type %>',  // 'success' or 'error'
-            title: '<%= message.text %>',
-            showConfirmButton: false,
-            timer: 2000  // Display for 2 seconds
+    <script>
+        <% if (message && message.type && message.text) { %>
+            Swal.fire({
+                position: 'center',
+                icon: '<%= message.type %>',
+                title: '<%= message.text %>',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        <% } %>
+    </script>
+
+    <!-- Popper and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#tableJaksa').DataTable();
         });
-    <% } %>
-</script>
-  
-  
+    </script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
-    
- <script>
-    new DataTable('#tablepengelolaan');
+     <script>
+    new DataTable('#tableJaksa');
  </script>
 
 
-
 </body>
+</html>

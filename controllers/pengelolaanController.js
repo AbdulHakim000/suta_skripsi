@@ -64,6 +64,7 @@ module.exports = {
                             layout: layout,
                             title: 'Halaman pengelolaan',
                             userRole: req.session.user.role,
+                            user: req.session.user,
                             pengelolaans: rowsPengelolaan,
                             tahanans: rowsTahanan,
                             jaksas: rowsJaksa
@@ -72,6 +73,51 @@ module.exports = {
         });
     });
     },
+    tambah: (req, res) => {
+        // ambil data pengelolaan
+        pengelolaan.fetchData(req.db, (errPengelolaan, rowsPengelolaan) => {
+            if (errPengelolaan) {
+                req.flash('error', errPengelolaan.message);
+                return res.render('admin/pengelolaan/add_modal', { pengelolaans: [], tahananas: [] });
+            } 
+            // ambil data tahanan
+            pengelolaan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
+                if (errTahanan) {
+                    req.flash('error', errTahanan.message);
+                    return res.render('admin/pengelolaan/add_modal', { pengelolaans: rowsPengelolaan, tahanans: [] });
+                }
+                // ambil data jaksa
+                pengelolaan.fetchDataJaksa(req.db, (errJaksa, rowsJaksa) => {
+                    if (errJaksa) {
+                        req.flash('error', errJaksa.message);
+                        return res.render('admin/pengelolaan/add_modal', { pengelolaans: rowsPengelolaan, tahanans: rowsTahanan, jaksa: [] });
+                    }
+
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+                    let layout;
+                    
+                    if (userRole === 'admin') {
+                        layout = 'layout/admin/main';
+                    } else if (userRole === 'staff') {
+                        layout = 'layout/staff/main';
+                    } else {
+                        layout = 'layout/public/main';
+                    }
+                    // render view dengan ketiga data
+                        res.render('admin/pengelolaan/add_modal', {
+                            layout: layout,
+                            title: 'Halaman pengelolaan',
+                            userRole: req.session.user.role,
+                            user: req.session.user,
+                            pengelolaans: rowsPengelolaan,
+                            tahanans: rowsTahanan,
+                            jaksas: rowsJaksa
+                });
+            });
+        });
+    });
+    },
+
 
     detail: (req, res) => {
      pengelolaan.fetchJoinedData(req.db, (err, rows) => {
@@ -95,6 +141,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman pengelolaan',
                 userRole: req.session.user.role,
+                user: req.session.user,
                 pengelolaan, 
                 pengelolaans: rows})
         }
@@ -138,6 +185,7 @@ module.exports = {
                             title: 'Halaman pengelolaan',
                             pengelolaan,
                             userRole: req.session.user.role,
+                            user: req.session.user,
                             pengelolaans: rowsPengelolaan,
                             tahanans: rowsTahanan,
                             jaksas: rowsJaksa

@@ -53,6 +53,37 @@ module.exports = {
                     layout: layout,
                     title: 'Halaman jaksa',
                     jaksas: rows,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                    messages: req.flash()
+                });
+            }
+        });
+    },
+    tambah: (req, res) => {
+        jaksa.fetchData(req.db, (err, rows) => {
+            const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+            if (err) {
+                req.flash('error', err.message);
+                res.render('admin/jaksa/add_modal', {
+                    layout: layout,
+                    title: 'Halaman jaksa',
+                    jaksas: '',
+                });
+            } else {
+                res.render('admin/jaksa/add_modal', {
+                    layout: layout,
+                    title: 'Halaman jaksa',
+                    jaksas: rows,
+                    user: req.session.user,
                     userRole: req.session.user.role,
                     messages: req.flash()
                 });
@@ -83,6 +114,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman jaksa',
                 jaksa, 
+                user: req.session.user,
                 userRole: req.session.user.role,
                 jaksas: rows})
         }
@@ -113,6 +145,7 @@ module.exports = {
                     layout: layout,
                     title: 'Halaman jaksa',
                     jaksa, 
+                    user: req.session.user,
                     userRole: req.session.user.role,
                     jaksas: rows})
             }

@@ -92,7 +92,12 @@
                     </div>
                     <div class="form-group">
                         <label for="perkara">Perkara</label>
-                        <input type="text" name="perkara" class="form-control" id="perkara" required value="<%= tahanan.perkara  %>">
+                        <select name="perkara" id="perkara" class="form-control" required>
+                          <option value="<%= tahanan.perkara  %>"><%= tahanan.perkara  %></option>
+                          <option value="Narkotika / Enz.2">Narkotika</option>
+                          <option value="Orang dan Harta Benda / Eoh.2">Orang dan Harta Benda</option>
+                          <option value="Keamanan dan Ketertiban Umum / Eku.2">Keamanan dan Ketertiban Umum</option>
+                        </select> 
                     </div>
                     <div class="form-group">
                         <label for="kewarganegaraan">kewarganegaraan</label>

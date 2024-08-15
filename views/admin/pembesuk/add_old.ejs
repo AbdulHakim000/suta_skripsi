@@ -1,12 +1,17 @@
-<div class="container-fluid">
-  <a href="/pembesuk">
-    <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
-  </a>
-  <div class="row mt-4 text-center ">
-      <div class="md-12 text-center">
-          <h1>Tambah Data Pembesuk</h1>
-      </div>
-  </div>
+
+            <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-modal">
+        Tambah Data Pembesuk
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="add-modal" tabindex="-1" aria-labelledby="user-modal-area" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="add-modal-label">Tambah Data</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
                 <form action="/pembesuk/add" method="POST" id="formTambahPembesuk">
                     <div class="form-group">
                         <label for="nik">NIK</label>

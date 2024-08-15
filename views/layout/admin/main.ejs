@@ -1,34 +1,201 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-    <!-- ini bootstap icon -->
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- my css -->
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
-    <!-- select2 -->
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css" rel="stylesheet" /> -->
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title  %></title>
-  </head>
-  <body>
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+     <!-- ini bootstap icon -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <%- include('navAdmin') %>
-    <div class="container">
+    
+</head>
 
-      <%- body %>
-    </div>
-   
+<body>
+    <!-- =============== Navigation ================ -->
+    <div class="containerx">
+        <div class="navigation" >
+            <ul>
+                <li>
+                    <a href="/">
+                        <span class="icon">
+                            <img src="/images/kejaksaan.png" alt="" class="foto">
+                        </span>
+                        <p class="titleA">APLIKASI SURAT BESUK <br>
+                            <span class="small-text">KEJAKSAAN NEGERI BANJARMASIN</span>
+                        </p>
+                    </a>
+                </li>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+                <li>
+                    <a href="/">
+                        <span class="icon">
+                            <ion-icon name="home-outline"></ion-icon>
+                        </span>
+                        <span class="title">Dashboards</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/surat">
+                        <span class="icon">
+                            <ion-icon name="mail-outline"></ion-icon>
+                        </span>
+                        <span class="title">Surat</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/pengajuan">
+                        <span class="icon">
+                            <ion-icon name="newspaper-outline"></ion-icon>
+                        </span>
+                        <span class="title">Pengajuan Surat</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pengelolaan">
+                        <span class="icon">
+                            <ion-icon name="file-tray-stacked-outline"></ion-icon>
+                        </span>
+                        <span class="title">Kelola Tahanan</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/tahanan">
+                        <span class="icon">
+                            <ion-icon name="body-outline"></ion-icon>
+                        </span>
+                        <span class="title">Tahanan</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/pembesuk">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">Pembesuk</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/jaksa">
+                        <span class="icon">
+                            <ion-icon name="school-outline"></ion-icon>
+                        </span>
+                        <span class="title">Jaksa</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/lapas">
+                        <span class="icon">
+                            <ion-icon name="business-outline"></ion-icon>
+                        </span>
+                        <span class="title">Lapas</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/user">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon>
+                        </span>
+                        <span class="title">User</span>
+                    </a>
+                </li>
+                <li class="logout-item">
+                    <a href="logout" id="logoutButton">
+                        <span class="icon">
+                            <ion-icon name="log-out-outline"></ion-icon>
+                        </span>
+                        <span class="title">Loguut</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        
+        <!-- ========================= Main ==================== -->
+         
+        <div class="main" >
+            <div class="topbar">
+                <div class="toggle">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </div>
+                <div class="user-info">
+                    <p class="username"><%= user.username %></p>
+                    <div class="user">
+                        <img src="/assets/imgs/customer01.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div id="content">
+            <%- body %>
+            </div>
+        </div>
+
+    <!-- =========== Scripts =========  -->
+    <script src="/assets/js/main.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <script>
+        document.getElementById('logoutButton').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default button action
+
+            Swal.fire({
+                title: "Apakah Kamu Yakin?",
+                text: "Kamu akan logout dari akun ini!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, Logout!",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Logged Out!",
+                        text: "Anda telah berhasil logout.",
+                        icon: "success"
+                    }).then(() => {
+                        // Redirect to logout URL after confirming
+                        window.location.href = '/logout';
+                    });
+                }
+            });
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  </body>
+
+    <script>
+$(document).ready(function() {
+    // Ketika link di klik
+    $('a.nav-link').on('click', function(e) {
+        e.preventDefault(); // Mencegah default behavior
+        
+        var url = $(this).attr('href'); // Mendapatkan URL dari href
+        
+        // Memuat konten ke dalam div #content
+        $('#content').load(url + ' #content', function() {
+            // Setelah konten dimuat, Anda dapat menambahkan skrip atau fungsi tambahan jika diperlukan
+        });
+    });
+});
+</script>
+</body>
+
 </html>

@@ -18,6 +18,7 @@ router.get('/logout', (req, res) => {
     });
 });
 router.get('/', userController.index);
+router.get('/tambah', userController.index);
 router.post('/add', userController.add);
 router.post('/edit', userController.update);
 router.get('/detail/:id',userController.detail);

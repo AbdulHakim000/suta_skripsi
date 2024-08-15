@@ -20,6 +20,32 @@ module.exports = {
             res.render('admin/pembesuk/index', { 
                 layout: layout,
                 userRole: req.session.user.role,
+                user: req.session.user,
+                title: 'Halaman Pembesuk',
+                pembesuks: rows})
+        }
+    });
+    },
+    tambah: (req, res) => {
+
+    const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+     pembesuk.fetchData(req.db, (err, rows) => {
+        if (err) {
+            req.flash('error', err.message); 
+            res.render('admin/pembesuk/add_modal', { data:''})
+        } else {
+            res.render('admin/pembesuk/add_modal', { 
+                layout: layout,
+                userRole: req.session.user.role,
+                user: req.session.user,
                 title: 'Halaman Pembesuk',
                 pembesuks: rows})
         }
@@ -48,6 +74,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman Pembesuk',
                 userRole: req.session.user.role,
+                user: req.session.user,
                 pembesuk, 
                 pembesuks: rows})
         }
@@ -75,6 +102,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman Pembesuk',
                 userRole: req.session.user.role,
+                user: req.session.user,
                 pembesuk, 
                 pembesuks: rows})
         }

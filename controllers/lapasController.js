@@ -52,6 +52,36 @@ module.exports = {
             } else {
                 res.render(viewName, {
                     layout: layout,
+                    user: req.session.user,
+                    title: 'Halaman lapas',
+                    lapass: rows
+                });
+            }
+        });
+    },
+    tambah: (req, res) => {
+
+        const userRole = req.session.user.role; // Assuming role is stored in req.user
+        let viewName;
+        let layout;
+            if (userRole === 'admin') {
+                viewName = 'admin/lapas/add_modal';
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                viewName = 'admin/lapas/add_modal';
+                layout = 'layout/staff/main';
+            } else {
+                viewName = 'public/lapas/add_modal';
+                layout = 'layout/public/main';
+            }
+        lapas.fetchData(req.db, (err, rows) => {
+            if (err) {
+                req.flash('error', err.message);
+                res.render(viewName, { data:'' });
+            } else {
+                res.render(viewName, {
+                    layout: layout,
+                    user: req.session.user,
                     title: 'Halaman lapas',
                     lapass: rows
                 });
@@ -84,6 +114,7 @@ module.exports = {
             res.render(viewName, { 
                 layout: layout,
                 title: 'Halaman lapas',
+                user: req.session.user,
                 lapas, 
                 lapass: rows})
         }
@@ -111,6 +142,7 @@ module.exports = {
             res.render('admin/lapas/edit_modal', { 
                 layout: layout,
                 title: 'Halaman lapas',
+                user: req.session.user,
                 lapas, 
                 lapass: rows})
         }

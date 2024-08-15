@@ -45,7 +45,62 @@ module.exports = {
                         res.render('admin/surat/index', {
                             layout: layout,
                             title: 'Halaman Surat',
-                            user,
+                            user: req.session.user,
+                            userRole: req.session.user.role,
+                            surats: rowsSurat,
+                            tahanans: rowsTahanan,
+                            pembesuks: rowsPembesuk,
+                            joins: rowsJoin
+                        });
+                    });
+                });
+            });
+        });
+    },
+    tambah: (req, res) => {
+        // Ambil data surat
+        surat.fetchDataWithTahanan(req.db, (errSurat, rowsSurat) => {
+            if (errSurat) {
+                req.flash('error', errSurat.message);
+                return res.render('admin/surat/add_modal', { surats: [], tahanans: [], pembesuks: [] });
+            }
+
+            // Ambil data tahanan
+            surat.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
+                if (errTahanan) {
+                    req.flash('error', errTahanan.message);
+                    return res.render('admin/surat/add_modal', { surats: rowsSurat, tahanans: [], pembesuks: [] });
+                }
+
+                // Ambil data pembesuk
+                surat.fetchDataPembesuk(req.db, (errPembesuk, rowsPembesuk) => {
+                    if (errPembesuk) {
+                        req.flash('error', errPembesuk.message);
+                        return res.render('admin/surat/add_modal', { surats: rowsSurat, tahanans: rowsTahanan, pembesuks: [] });
+                    }
+
+                    surat.fetchJoinedData(req.db, (errJoin, rowsJoin) => {
+                        if (errJoin) {
+                        req.flash('error', errJoin.message);
+                        return res.render('admin/surat/add_modal', { surats: rowsSurat, tahanans: rowsTahanan, pembesuks: rowsPembesuks, join: [] });
+                    }
+
+                    const user = req.user; // Pastikan user sudah didefinisikan
+                    // Render view dengan ketiga data
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+
+                        let layout;
+                        if (userRole === 'admin') {
+                            layout = 'layout/admin/main';
+                        } else if (userRole === 'staff') {
+                            layout = 'layout/staff/main';
+                        } else {
+                            layout = 'layout/public/main';
+        }
+                        res.render('admin/surat/add_modal', {
+                            layout: layout,
+                            title: 'Halaman Surat',
+                            user: req.session.user,
                             userRole: req.session.user.role,
                             surats: rowsSurat,
                             tahanans: rowsTahanan,
@@ -82,6 +137,7 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman Surat',
                 surat, 
+                user: req.session.user,
                 surats: rows})
         }
     });
@@ -127,6 +183,7 @@ module.exports = {
                         title: 'Halaman Surat',
                         surat,
                         surats: rowsSurat,
+                        user: req.session.user,
                         userRole: req.session.user.role,
                         tahanans: rowsTahanan,
                         pembesuks: rowsPembesuk

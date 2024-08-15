@@ -175,6 +175,32 @@ module.exports = {
                 res.render('user/index', {
                     layout: layout,
                     title: 'Halaman user',
+                    user: req.session.user,
+                    users: rows
+                });
+            }
+        });
+    },
+    tambah: (req, res) => {
+
+        const userRole = req.session.user.role; // Assuming role is stored in req.user
+            let layout;
+            if (userRole === 'admin') {
+                layout = 'layout/admin/main';
+            } else if (userRole === 'staff') {
+                layout = 'layout/staff/main';
+            } else {
+                layout = 'layout/public/main';
+            }
+        user.fetchData(req.db, (err, rows) => {
+            if (err) {
+                req.flash('error', err.message);
+                res.render('user/add_modal', { data:'' });
+            } else {
+                res.render('user/add_modal', {
+                    layout: layout,
+                    title: 'Halaman user',
+                    user: req.session.user,
                     users: rows
                 });
             }
@@ -202,6 +228,7 @@ module.exports = {
             res.render('user/detail_modal', { 
                 layout: layout,
                 title: 'Halaman user',
+                user: req.session.user,
                 user, 
                 users: rows})
         }
