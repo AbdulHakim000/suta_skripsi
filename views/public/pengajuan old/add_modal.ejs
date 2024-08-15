@@ -13,20 +13,64 @@
               </div>
               <div class="modal-body">
                 <form action="/pengajuan/add" enctype="multipart/form-data" method="POST" id="formTambahPembesuk">
-                  
+
+                    <div class="form-group">
+                        <label for="nik_pembesuk">NIK Pembesuk</label>
+                        <input type="text" name="nik_pembesuk" class="form-control" id="nik_pembesuk" required>
+                    </div>
                     <div class="form-group">
                         <label for="nama_pembesuk">Nama pembesuk</label>
                         <input type="text" name="nama_pembesuk" class="form-control" id="nama_pembesuk" required>
                     </div>
                     <div class="form-group">
-                        <label for="alamat_pembesuk">Alamat Pembesuk</label>
-                        <input type="text" name="alamat_pembesuk" class="form-control" id="alamat_pembesuk" required>
+                        <label for="tmp_lahir_pembesuk">Tempat Lahir Pembesuk</label>
+                        <input type="text" name="tmp_lahir_pembesuk" class="form-control" id="tmp_lahir_pembesuk" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="jns_kelamin_pembesuk">Jenis Kelamin</label>
+                        <select name="jns_kelamin_pembesuk" id="jns_kelamin_pembesuk" class="form-control" required>
+                          <option value="-">Jenis Kelamin</option>
+                          <option value="Laki-Laki">Laki-Laki</option>
+                          <option value="Perempuan">Perempuan</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="pekerjaan_pembesuk">Pekerjaan Pembesuk</label>
                         <input type="text" name="pekerjaan_pembesuk" class="form-control" id="pekerjaan_pembesuk" required>
                     </div>
-
+                    <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <input type="text" name="provinsi" class="form-control" id="provinsi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kabupaten">Kabupaten</label>
+                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kecamatan">Kecamatan</label>
+                        <input type="text" name="kecamatan" class="form-control" id="kecamatan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="kelurahan">Kelurahan / Desa</label>
+                        <textarea name="kelurahan" class="form-control" id="kelurahan" rows="4" cols="50" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="kewarganegaraan">kewarganegaraan</label>
+                        <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
+                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control" required>
+                            <option value="">--Registrasi Tahanan--</option>
+                        <% tahanans.forEach(tahanan => { %>
+                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
+                        <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_tahanan">Nama Tahanan</label>
+                        <input type="text" name="nama_tahanan" class="form-control" id="nama_tahanan" required>
+                    </div>
                     <div class="form-group">
                         <label for="hubungan">Hubungan</label>
                         <select name="hubungan" id="hubungan" class="form-control">
@@ -38,26 +82,8 @@
                             <option value="Teman">Teman</option>
                         </select>
                     </div>
-                
                     <div class="form-group">
-                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
-                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control" required>
-                            <option value="">--Registrasi Tahanan--</option>
-                        <% tahanans.forEach(tahanan => { %>
-                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
-                        <% }) %>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="nama_tahananx">Nama Tahanan</label>
-                        <input type="text" name="nama_tahananx" class="form-control" id="nama_tahananx" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="tanggal_besuk">Tanggal Besuk</label>
-                        <input type="date" name="tanggal_besuk" class="form-control" id="tanggal_besuk" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="hidden" name="status_pengajuan" class="form-control" id="status" value="Belum Diproeses">
+                        <input type="hidden" name="status" class="form-control" id="status" value="Belum Diproeses">
                     </div>
                     <div class="form-group">
                         <label for="gambar_ktp">Foto KTP</label>

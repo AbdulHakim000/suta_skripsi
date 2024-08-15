@@ -40,11 +40,10 @@
                     <tr>
 
                         <th>Nomor</th>
-                        <th>NIK Pembesuk</th>
                         <th>Nama Pembesuk</th>
-                        <th>Registrasi</th>
+                        <th>Hubungan</th>
+                        <th>Registrasi Tahanan</th>
                         <th>Nama Tahanan</th>
-                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -54,19 +53,21 @@
                          
                             <tr>
                                 <td><%= i + 1  %></td>
-                                <td><%= pengajuan.nik_pembesuk  %></td>
-                                <td><%= pengajuan.nama_pembesuk %></td>
+                                <td><%= pengajuan.nama_pembesuk  %></td>
+                                <td><%= pengajuan.hubungan %></td>
                                 <td><%= pengajuan.registrasi_tahanan %></td>
                                 <td><%= pengajuan.nama_tahanan  %></td>
-                                <td><%= pengajuan.status  %></td>
                                 <td>
-                                    <a href="/pengajuan/edit/<%= pengajuan.id_pengajuan %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
-                                    <a href="/pengajuan/delete/<%= pengajuan.id_pengajuan%>" onclick="return confirmDelete(event)">
+                                    <a href="/pengajuan/edit/<%= pengajuan.id %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    <a href="/pengajuan/delete/<%= pengajuan.id%>" onclick="return confirmDelete(event)">
                                         <button class="btn btn-danger badge rounded-pill"><i class="bi bi-trash"></i>Hapus</button>
                                     </a>
-                                    <a href="/pengajuan/detail/<%= pengajuan.id_pengajuan  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
+                                <% if (pengajuan.status_pengajuan === 'approved') { %>
+                                    <a href="/pengajuan/detail/<%= pengajuan.id %>" class="btn btn-success badge rounded-pill">
+                                        <i class="bi bi-info-circle"></i> Detail
+                                    </a>
+                                <% } %>
                                 </td>
-                                
                             </tr>
                             <% }) %>
                     </tbody>

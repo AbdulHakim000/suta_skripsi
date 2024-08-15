@@ -17,64 +17,26 @@
 <div class="form-group">
 
                     <div class="form-group">
-                        <input type="hidden" name="id_pengajuan" class="form-control" id="id_registrasi" required value="<%= pengajuan.id_pengajuan  %>">
+                        <input type="hidden" name="id" class="form-control" id="id" required value="<%= pengajuan.id %>">
                     </div>                
-                    <div class="form-group">
-                        <label for="nik_pembesuk">NIK Pembesuk</label>
-                        <input type="text" name="nik_pembesuk" class="form-control" id="nik_pembesuk" required value="<%= pengajuan.nik_pembesuk  %>"> 
-                    </div>
                     <div class="form-group">
                         <label for="nama_pembesuk">Nama pembesuk</label>
                         <input type="text" name="nama_pembesuk" class="form-control" id="nama_pembesuk" required value="<%= pengajuan.nama_pembesuk  %>">
                     </div>
                     <div class="form-group">
-                        <label for="tmp_lahir_pembesuk">Tempat Lahir Pembesuk</label>
-                        <input type="text" name="tmp_lahir_pembesuk" class="form-control" id="tmp_lahir_pembesuk" required value="<%= pengajuan.tmp_lahir_pembesuk  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="jns_kelamin_pembesuk">Jenis Kelamin</label>
-                        <select name="jns_kelamin_pembesuk" id="jns_kelamin_pembesuk" class="form-control" required>
-                          <option value="<%= pengajuan.jns_kelamin_pembesuk  %>"><%= pengajuan.jns_kelamin_pembesuk  %></option>
-                          <option value="Laki-Laki">Laki-Laki</option>
-                          <option value="Perempuan">Perempuan</option>
-                        </select>
+                        <label for="alamat_pembesuk">Alamat Pembesuk</label>
+                        <input type="text" name="alamat_pembesuk" class="form-control" id="alamat_pembesuk" required value="<%= pengajuan.alamat_pembesuk %>">
                     </div>
                     <div class="form-group">
                         <label for="pekerjaan_pembesuk">Pekerjaan Pembesuk</label>
-                        <input type="text" name="pekerjaan_pembesuk" class="form-control" id="pekerjaan_pembesuk" required value="<%= pengajuan.pekerjaan_pembesuk  %>">
+                        <input type="text" name="pekerjaan_pembesuk" class="form-control" id="pekerjaan_pembesuk" required value="<%= pengajuan.pekerjaan_pembesuk %>">
                     </div>
-                    <div class="form-group">
-                        <label for="provinsi">Provinsi</label>
-                        <input type="text" name="provinsi" class="form-control" id="provinsi" required value="<%= pengajuan.provinsi  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="kabupaten">Kabupaten</label>
-                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required value="<%= pengajuan.kabupaten  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="kecamatan">Kecamatan</label>
-                        <input type="text" name="kecamatan" class="form-control" id="kecamatan" required value="<%= pengajuan.kecamatan  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="kelurahan">Kelurahan / Desa</label>
-                        <textarea name="kelurahan" class="form-control" id="kelurahan" rows="4" cols="50" required><%= pengajuan.kelurahan  %></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="kewarganegaraan">kewarganegaraan</label>
-                        <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required value="<%= pengajuan.kewarganegaraan  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
-                        <input type="text" name="registrasi_tahanan" class="form-control" id="registrasi_tahanan" value="<%= pengajuan.registrasi_tahanan  %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="nama_tahanan">Nama Tahanan</label>
-                        <input type="text" name="nama_tahanan" class="form-control" id="nama_tahanan" required value="<%= pengajuan.nama_tahanan  %>">
-                    </div>
+
                     <div class="form-group">
                         <label for="hubungan">Hubungan</label>
-                        <select name="hubungan" id="hubungan" class="form-control" >
-                            <option value="<%= pengajuan.hubungan  %>"><%= pengajuan.hubungan  %></option>
+                        <select name="hubungan" id="hubungan" class="form-control">
+                            <option value="<%= pengajuan.hubungan %>"><%= pengajuan.id %>
+                            </option>
                             <option value="Saudara / saudari">Saudara / saudari</option>
                             <option value="Keluarga">Keluarga</option>
                             <option value="Anak">Anak</option>
@@ -82,13 +44,32 @@
                             <option value="Teman">Teman</option>
                         </select>
                     </div>
+                
                     <div class="form-group">
-                        <label for="status">status</label>
-                        <select name="status" id="status" class="form-control" >
-                            <option value="<%= pengajuan.status  %>"><%= pengajuan.status  %></option>
-                            <option value="Belum Diproses">Belum Diproses</option>
-                            <option value="Sudah Selesai">Sudah Selesai</option>
+                        <label for="registrasi_tahanan">Registrasi Tahanan</label>
+                        <select name="registrasi_tahanan" id="registrasi_tahanan" class="form-control" required>
+                            <option value="<%= pengajuan.registrasi_tahanan %>"><%= pengajuan.registrasi_tahanan %></option>
+                            <% tahanans.forEach(tahanan => { %>
+                            <option value="<%= tahanan.registrasi_tahanan %>"><%= tahanan.registrasi_tahanan %></option> 
+                        <% }) %>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nama_tahananx">Nama Tahanan</label>
+                        <input type="text" name="nama_tahananx" class="form-control" id="nama_tahananx" required value="<%= pengajuan.nama_tahananx %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal_besuk">Tanggal Besuk</label>
+                        <input type="date" name="tanggal_besuk" class="form-control" id="tanggal_besuk" required value="<%= new Date(pengajuan.tanggal_besuk).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }) %>">
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="pengajuan_by" class="form-control" id="pengajuan_by" required value="<%= pengajuan.pengajuan_by %>">
+                    </div> 
+                    <div class="form-group">
+                        <input type="hidden" name="tgl_pengajuan" class="form-control" id="tgl_pengajuan" required value="<%= new Date(pengajuan.tgl_pengajuan).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }) %>">
+                    </div> 
+                    <div class="form-group">
+                        <input type="hidden" name="status_pengajuan" class="form-control" id="status" value="Belum Diproeses">
                     </div>
                     <div class="form-group mt-4">
                         <label for="gambar_ktp" class="form-label">Foto KTP</label>

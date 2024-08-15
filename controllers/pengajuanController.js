@@ -30,7 +30,8 @@ const uploadPengajuan = multer({
 
 module.exports = {
 
-    index: (req, res) => {
+
+    indexAdmin: (req, res) => {
         // Ambil data surat
         pengajuan.fetchData(req.db, (errpengajuan, rowsPengajuan) => {
             if (errpengajuan) {
@@ -46,10 +47,10 @@ module.exports = {
                 }
 
                 // Ambil data pembesuk
-                pengajuan.fetchDataPembesuk(req.db, (errPembesuk, rowsPembesuk) => {
-                    if (errPembesuk) {
-                        req.flash('error', errPembesuk.message);
-                        return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: rowsTahanan, pembesuks: [] });
+                pengajuan.fetchDataWithTahanan(req.db, (errWithTahanan, rowsWithTahanan) => {
+                    if (errWithTahanan) {
+                        req.flash('error', errWithTahanan.message);
+                        return res.render('admin/pengajuan/index', { pengajuans: rowsWithTahanan, tahanans: rowsTahanan, withTahanan: [] });
                     }
 
                     const userRole = req.session.user.role; // Assuming role is stored in req.user
@@ -75,75 +76,235 @@ module.exports = {
                         user: req.session.user,
                         userRole: req.session.user.role,
                         tahanans: rowsTahanan,
-                        pembesuks: rowsPembesuk
+                        allPengajuans: rowsWithTahanan
                     });
                 });
             });
         });
     },
 
-    detail: (req, res) => {
-     pengajuan.fetchData(req.db, (err, rows) => {
-        if (err) {
-            req.flash('error', err.message); 
-            res.render('admin/pengajuan/detail_modal', { data:''})
-        } else {
-            const id = parseInt(req.params.id);
-            const pengajuan = rows.find(pengajuan => pengajuan.id_pengajuan === id);
+    index: (req, res) => {
+    const userEmail = req.session.user.email;
+
+    pengajuan.fetchDataByEmail(req.db, userEmail, (errPengajuan, rowsPengajuan) => {
+        if (errPengajuan) {
+            req.flash('error', errPengajuan.message);
+            return res.render('admin/pengajuan/index', { pengajuans: [], tahanans: [], pembesuks: [] });
+        }
+
+        pengajuan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
+            if (errTahanan) {
+                req.flash('error', errTahanan.message);
+                return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: [], pembesuks: [] });
+            }
+
+            pengajuan.fetchDataWithTahanan(req.db, (errWithTahanan, rowsWithTahanan) => {
+                if (errWithTahanan) {
+                    req.flash('error', errWithTahanan.message);
+                    return res.render('admin/pengajuan/index', { pengajuans: rowsWithTahanan, tahanans: rowsTahanan, withTahanan: [] });
+                }
+
+                const userRole = req.session.user.role;
+                let viewName;
+                let layout;
+                if (userRole === 'admin') {
+                    viewName = 'admin/pengajuan/index';
+                    layout = 'layout/admin/main';
+                } else if (userRole === 'staff') {
+                    viewName = 'admin/pengajuan/index';
+                    layout = 'layout/staff/main';
+                } else {
+                    viewName = 'public/pengajuan/index';
+                    layout = 'layout/public/main';
+                }
+
+                res.render(viewName, {
+                    layout: layout,
+                    title: 'Halaman pengajuan',
+                    pengajuans: rowsPengajuan,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                    tahanans: rowsTahanan,
+                    withTahanans: rowsWithTahanan
+                });
+            });
+        });
+    });
+},
+
+ 
+    // detail: (req, res) => {
+    //  pengajuan.fetchData(req.db, (err, rows) => {
+    //     if (err) {
+    //         req.flash('error', err.message); 
+    //         res.render('admin/pengajuan/detail_modal', { data:''})
+    //     } else {
+    //         const id = parseInt(req.params.id);
+    //         const pengajuan = rows.find(pengajuan => pengajuan.id_pengajuan === id);
 
             
-            const userRole = req.session.user.role; // Assuming role is stored in req.user
-            let viewName;
-            let layout;
-            if (userRole === 'admin') {
-                viewName = 'admin/pengajuan/detail_modal';
-                layout = 'layout/admin/main';
-            } else if (userRole === 'staff') {
-                viewName = 'admin/pengajuan/detail_modal';
-                layout = 'layout/staff/main';
-            } else {
-                viewName = 'public/pengajuan/detail_modal';
-                layout = 'layout/public/main';
+    //         const userRole = req.session.user.role; // Assuming role is stored in req.user
+    //         let viewName;
+    //         let layout;
+    //         if (userRole === 'admin') {
+    //             viewName = 'admin/pengajuan/detail_modal';
+    //             layout = 'layout/admin/main';
+    //         } else if (userRole === 'staff') {
+    //             viewName = 'admin/pengajuan/detail_modal';
+    //             layout = 'layout/staff/main';
+    //         } else {
+    //             viewName = 'public/pengajuan/detail_modal';
+    //             layout = 'layout/public/main';
+    //         }
+    //         res.render(viewName, { 
+    //             layout: layout,
+    //             title: 'Halaman pengajuan',
+    //             user: req.session.user,
+    //             userRole: req.session.user.role,
+    //             pengajuan, 
+    //             pengajuans: rows})
+    //     }
+    // });
+    // },
+        detail: (req, res) => {
+        // Ambil data surat
+        pengajuan.fetchData(req.db, (errpengajuan, rowsPengajuan) => {
+            if (errpengajuan) {
+                req.flash('error', errpengajuan.message);
+                return res.render('admin/pengajuan/index', { pengajuans: [], tahanans: [], pembesuks: [] });
             }
-            res.render(viewName, { 
-                layout: layout,
-                title: 'Halaman pengajuan',
-                user: req.session.user,
-                userRole: req.session.user.role,
-                pengajuan, 
-                pengajuans: rows})
-        }
-    });
+
+            // Ambil data tahanan
+            pengajuan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
+                if (errTahanan) {
+                    req.flash('error', errTahanan.message);
+                    return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: [], pembesuks: [] });
+                }
+
+                // Ambil data pembesuk
+                pengajuan.fetchDataWithTahanan(req.db, (errWithTahanan, rowsWithTahanan) => {
+                    if (errWithTahanan) {
+                        req.flash('error', errWithTahanan.message);
+                        return res.render('admin/pengajuan/index', { pengajuans: rowsWithTahanan, tahanans: rowsTahanan, withTahanan: [] });
+                    }
+                    const id = parseInt(req.params.id);
+                    const pengajuan = rowsWithTahanan.find(pengajuan => pengajuan.id === id);
+
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+                    
+                    let viewName;  // Variabel untuk menentukan view yang akan dirender
+                    let layout;
+                        if (userRole === 'admin') {
+                            viewName = 'admin/pengajuan/detail_modal';
+                            layout = 'layout/admin/main';
+                        } else if (userRole === 'staff') {
+                            viewName = 'admin/pengajuan/detail_modal';
+                            layout = 'layout/staff/main';
+                        } else {
+                            viewName = 'public/pengajuan/detail_modal';
+                            layout = 'layout/public/main';
+                    }
+
+                    // Render view dengan ketiga data
+                    res.render(viewName, {
+                        layout: layout,
+                        title: 'Halaman pengajuan',
+                        pengajuans: rowsPengajuan,
+                        pengajuan,
+                        user: req.session.user,
+                        userRole: req.session.user.role,
+                        tahanans: rowsTahanan,
+                        allPengajuans: rowsWithTahanan
+                    });
+                });
+            });
+        });
     },
 
-    edit: (req, res) => {
-     pengajuan.fetchData(req.db, (err, rows) => {
-        if (err) {
-            req.flash('error', err.message); 
-            res.render('admin/pengajuan/edit_modal', { data:''})
-        } else {
-            const id = parseInt(req.params.id);
-            const pengajuan = rows.find(pengajuan => pengajuan.id_pengajuan === id);
-            const userRole = req.session.user.role; // Assuming role is stored in req.user
+    edit : (req, res) => {
+        // Ambil data surat
+        pengajuan.fetchData(req.db, (errpengajuan, rowsPengajuan) => {
+            if (errpengajuan) {
+                req.flash('error', errpengajuan.message);
+                return res.render('admin/pengajuan/index', { pengajuans: [], tahanans: [], pembesuks: [] });
+            }
+
+            // Ambil data tahanan
+            pengajuan.fetchDataTahanan(req.db, (errTahanan, rowsTahanan) => {
+                if (errTahanan) {
+                    req.flash('error', errTahanan.message);
+                    return res.render('admin/pengajuan/index', { pengajuans: rowsPengajuan, tahanans: [], pembesuks: [] });
+                }
+
+                // Ambil data pembesuk
+                pengajuan.fetchDataWithTahanan(req.db, (errWithTahanan, rowsWithTahanan) => {
+                    if (errWithTahanan) {
+                        req.flash('error', errWithTahanan.message);
+                        return res.render('admin/pengajuan/index', { pengajuans: rowsWithTahanan, tahanans: rowsTahanan, withTahanan: [] });
+                    }
+                    const id = parseInt(req.params.id);
+                    const pengajuan = rowsWithTahanan.find(pengajuan => pengajuan.id === id);
+
+                    const userRole = req.session.user.role; // Assuming role is stored in req.user
+                    
+                    let viewName;  // Variabel untuk menentukan view yang akan dirender
+                    let layout;
+                        if (userRole === 'admin') {
+                            viewName = 'admin/pengajuan/edit_modal';
+                            layout = 'layout/admin/main';
+                        } else if (userRole === 'staff') {
+                            viewName = 'admin/pengajuan/edit_modal';
+                            layout = 'layout/staff/main';
+                        } else {
+                            viewName = 'public/pengajuan/edit_modal';
+                            layout = 'layout/public/main';
+                    }
+
+                    // Render view dengan ketiga data
+                    res.render(viewName, {
+                        layout: layout,
+                        title: 'Halaman pengajuan',
+                        pengajuans: rowsPengajuan,
+                        pengajuan,
+                        user: req.session.user,
+                        userRole: req.session.user.role,
+                        tahanans: rowsTahanan,
+                        allPengajuans: rowsWithTahanan
+                    });
+                });
+            });
+        });
+    },
+
+
+//     edit: (req, res) => {
+//      pengajuan.fetchData(req.db, (err, rows) => {
+//         if (err) {
+//             req.flash('error', err.message); 
+//             res.render('admin/pengajuan/edit_modal', { data:''})
+//         } else {
+//             const id = parseInt(req.params.id);
+//             const pengajuan = rows.find(pengajuan => pengajuan.id === id);
+//             const userRole = req.session.user.role; // Assuming role is stored in req.user
             
-            let layout;
-            if (userRole === 'admin') {
-                layout = 'layout/admin/main';
-            } else if (userRole === 'staff') {
-                layout = 'layout/staff/main';
-            } else {
-                layout = 'layout/public/main';
-            }           
-            res.render('admin/pengajuan/edit_modal', { 
-                layout: layout,
-                title: layout,
-                user: req.session.user,
-                userRole: req.session.user.role,
-                pengajuan, 
-                pengajuans: rows})
-        }
-    });
-}  ,
+//             let layout;
+//             if (userRole === 'admin') {
+//                 layout = 'layout/admin/main';
+//             } else if (userRole === 'staff') {
+//                 layout = 'layout/staff/main';
+//             } else {
+//                 layout = 'layout/public/main';
+//             }           
+//             res.render('admin/pengajuan/edit_modal', { 
+//                 layout: layout,
+//                 title: layout,
+//                 user: req.session.user,
+//                 userRole: req.session.user.role,
+//                 pengajuan, 
+//                 pengajuans: rows})
+//         }
+//     });
+// },
 
     add : async (req, res) => {
         try {
@@ -151,23 +312,19 @@ module.exports = {
             console.log('Request body:', req.body);
 
             const {
-                nik_pembesuk, nama_pembesuk, tmp_lahir_pembesuk, jns_kelamin_pembesuk, pekerjaan_pembesuk, provinsi, kabupaten, kecamatan, kelurahan, kewarganegaraan, registrasi_tahanan, nama_tahanan, hubungan, status} = req.body;
+                nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, status_pengajuan} = req.body;
 
             const form_pengajuan = {
-                nik_pembesuk, 
                 nama_pembesuk, 
-                tmp_lahir_pembesuk, 
-                jns_kelamin_pembesuk, 
+                alamat_pembesuk, 
                 pekerjaan_pembesuk, 
-                provinsi, 
-                kabupaten, 
-                kecamatan, 
-                kelurahan, 
-                kewarganegaraan, 
-                registrasi_tahanan, 
-                nama_tahanan, 
                 hubungan, 
-                status,
+                registrasi_tahanan, 
+                nama_tahananx,
+                tanggal_besuk, 
+                pengajuan_by:  req.session.user.email,
+                tgl_pengajuan: new Date(),
+                status_pengajuan,
                 gambar_ktp: req.file ? req.file.filename : null // Periksa apakah req.file berisi file
             };
 
@@ -220,28 +377,24 @@ module.exports = {
     },
 
     update: async (req, res) => {
-        const {id_pengajuan, nik_pembesuk, nama_pembesuk, tmp_lahir_pembesuk,   jns_kelamin_pembesuk, pekerjaan_pembesuk, provinsi, kabupaten, kecamatan, kelurahan, kewarganegaraan, registrasi_tahanan, nama_tahanan, hubungan, status, old_gambar_ktp} = req.body;
+        const {id, nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, pengajuan_by, tgl_pengajuan, status_pengajuan, old_gambar_ktp} = req.body;
         // Check if a new image is uploaded
 
         console.log('Uploaded file:', req.file); // Debugging line
         const new_gambar_ktp = req.file ? req.file.filename : old_gambar_ktp;
 
         const form_pengajuan = {
-            id_pengajuan, 
-            nik_pembesuk, 
+            id, 
             nama_pembesuk, 
-            tmp_lahir_pembesuk, 
-            jns_kelamin_pembesuk, 
+            alamat_pembesuk, 
             pekerjaan_pembesuk, 
-            provinsi, 
-            kabupaten, 
-            kecamatan, 
-            kelurahan, 
-            kewarganegaraan, 
-            registrasi_tahanan, 
-            nama_tahanan, 
             hubungan, 
-            status,
+            registrasi_tahanan, 
+            nama_tahananx,
+            tanggal_besuk,
+            pengajuan_by, 
+            tgl_pengajuan,
+            status_pengajuan,
             gambar_ktp: new_gambar_ktp
         };
 
@@ -249,7 +402,7 @@ module.exports = {
 
         try {
             // Mengupdate data dengan menggunakan async/await
-            await pengajuan.updateData(req.db, id_pengajuan, form_pengajuan);
+            await pengajuan.updateData(req.db, id, form_pengajuan);
             
             req.session.message = {
                 type: 'success',
@@ -281,4 +434,24 @@ module.exports = {
         }
     })
     },
+
+    approvePengajuan: (db, pengajuanId, callback) => {
+            // Call the updateStatus function from the model and pass 'approved' as the status
+            pengajuan.updateStatus(db, pengajuanId, 'approved', (err, result) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                callback(null, result);
+            });
+        },
+    rejectPengajuan: (db, pengajuanId, callback) => {
+            // Call the updateStatus function from the model and pass 'approved' as the status
+            pengajuan.updateStatus(db, pengajuanId, 'rejected', (err, result) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                callback(null, result);
+            });
+        },
+
 }

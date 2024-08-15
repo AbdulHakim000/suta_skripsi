@@ -1,39 +1,46 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<!-- datatables -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.bootstrap5.css">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
+<!-- Contoh menggunakan CDN untuk jQuery dan DataTables -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-    <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-</head>
-<body>
+    </head>
+    <body>
         
         <div class="container-fluid">
         
             <div class="row mt-4">
-                <div class="col-md-12 text-center">
-                    <h1>Data Pengajuan</h1>
+                <div class="md-12 text-center">
+                    <h1>Ini Pengajuan Versi Public</h1>
                 </div>
             </div>
         
+            <div class="row mt-2">
+                <div class="md-12">
+                   <%-include('add_modal.ejs')%> 
+                </div>
+            </div>
 
             <div class="row mt-2">
-                <div class="col-md-12">
+                <div class="md-12">
 
                    <table id="tablepengajuan" class="table table-striped" style="width:100%"> 
                     <thead>
                     <tr>
+
                         <th>Nomor</th>
+                        <th>NIK Pembesuk</th>
                         <th>Nama Pembesuk</th>
                         <th>Registrasi</th>
                         <th>Nama Tahanan</th>
@@ -43,24 +50,21 @@
                     </thead>
                     <tbody>
                     
-                        <% allPengajuans.forEach((pengajuan, i) => { %>
+                        <% pengajuans.forEach((pengajuan, i) => { %>
                          
                             <tr>
                                 <td><%= i + 1  %></td>
+                                <td><%= pengajuan.nik_pembesuk  %></td>
                                 <td><%= pengajuan.nama_pembesuk %></td>
                                 <td><%= pengajuan.registrasi_tahanan %></td>
                                 <td><%= pengajuan.nama_tahanan  %></td>
-                                <td><%= pengajuan.status_pengajuan  %></td>
+                                <td><%= pengajuan.status  %></td>
                                 <td>
-                                    <a href="/pengajuan/edit/<%= pengajuan.id %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
-                                    <% if (userRole === 'admin') { %>  <!-- Only render delete button for admin -->
-                                    <a href="/pengajuan/delete/<%= pengajuan.id %>" onclick="return confirmDelete(event)">
-                                        <button class="btn btn-danger badge rounded-pill">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
+                                    <a href="/pengajuan/edit/<%= pengajuan.id_pengajuan %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    <a href="/pengajuan/delete/<%= pengajuan.id_pengajuan%>" onclick="return confirmDelete(event)">
+                                        <button class="btn btn-danger badge rounded-pill"><i class="bi bi-trash"></i>Hapus</button>
                                     </a>
-                                     <% } %>
-                                    <a href="/pengajuan/detail/<%= pengajuan.id  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
+                                    <a href="/pengajuan/detail/<%= pengajuan.id_pengajuan  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
                                 </td>
                                 
                             </tr>
