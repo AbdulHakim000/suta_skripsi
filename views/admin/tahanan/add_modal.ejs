@@ -1,10 +1,10 @@
 <div class="container-fluid">
-  <a href="/pengelolaan">
+  <a href="/tahanan">
     <button type="button" class="btn btn-outline-danger mt-5">Kembali</button>
   </a>
   <div class="row mt-4 text-center ">
       <div class="md-12 text-center">
-          <h1>Tambah Data Pengelolaan</h1>
+          <h1>Tambah Data Tahanan</h1>
       </div>
   </div>
                 <form action="/tahanan/add" enctype="multipart/form-data" method="POST" id="formTambahPembesuk">
@@ -26,13 +26,33 @@
                         <label for="tmp_lahir">Tempat Lahir</label>
                         <input type="text" name="tmp_lahir" class="form-control" id="tmp_lahir" required>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="provinsi">Provinsi</label>
                         <input type="text" name="provinsi" class="form-control" id="provinsi" required>
-                    </div>
+                    </div> -->
                     <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <select name="provinsi" id="provinsi" class="form-control" required>
+                            <option value="">--Pilih Provinsi--</option>
+                            <% provinsi.forEach(function(provinsi) { %>
+                                <option value="<%= provinsi.id_provinsi %>"><%= provinsi.nama_provinsi %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <!-- <div class="form-group">
                         <label for="kabupaten">Kabupaten</label>
                         <input type="text" name="kabupaten" class="form-control" id="kabupaten" required>
+                    </div> -->
+                    <div class="form-group">
+                        <label for="kabupaten">Kabupaten</label>
+                        <select name="kabupaten" id="kabupaten" class="form-control" required>
+                            <option value="">--Pilih Kabupaten--</option>
+                            <% kabupaten.forEach(function(kabupaten) { %>
+                                <option value="<%= kabupaten.id_kabupaten %>" data-provinsi="<%= kabupaten.id_provinsi %>">
+                                    <%= kabupaten.nama_kabupaten %>
+                                </option>
+                            <% }); %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="kecamatan">Kecamatan</label>
@@ -112,6 +132,31 @@
             </div>
           </div>
         </div>
+
+        <script>
+            document.getElementById('provinsi').addEventListener('change', function() {
+                const selectedProvinsi = this.value;
+                const kabupatenSelect = document.getElementById('kabupaten');
+                const kabupatenOptions = kabupatenSelect.querySelectorAll('option');
+
+                // Reset options kabupaten kecuali option default
+                kabupatenOptions.forEach(option => {
+                    if (option.value !== "") {
+                        option.style.display = 'none'; // Sembunyikan semua opsi
+                    }
+                });
+
+                // Tampilkan kabupaten yang sesuai dengan provinsi yang dipilih
+                kabupatenOptions.forEach(option => {
+                    if (option.dataset.provinsi === selectedProvinsi) {
+                        option.style.display = 'block'; // Tampilkan opsi yang sesuai
+                    }
+                });
+
+                // Reset pilihan kabupaten
+                kabupatenSelect.value = '';
+            });
+        </script>
         <script>
             // Fungsi untuk format tanggal dan waktu
             function formatDate(date) {

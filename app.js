@@ -127,13 +127,13 @@ app.get('/logout', (req, res) => {
         res.redirect('/login'); // Ganti dengan halaman yang sesuai setelah logout
     });
 });
-app.use('/jaksa', isAuthenticated, jaksaRouter);
+app.use('/jaksa',isAuthenticated, jaksaRouter);
 app.use('/pembesuk',isAuthenticated, pembesukRouter);
 app.use('/surat',isAuthenticated, suratRouter);
 app.use('/provinsi',isAuthenticated, provinsiRouter);
 app.use('/kabupaten',isAuthenticated, kabupatenRouter);
 app.use('/tahanan',isAuthenticated, tahananRouter);
-app.use('/pengajuan',isAuthenticated, pengajuanRouter);
+app.use('/pengajuan', pengajuanRouter);
 app.use('/pengelolaan',isAuthenticated, pengelolaanRouter);
 app.use('/user',isAuthenticated, userRouter);
 app.use('/lapas',isAuthenticated, lapasRouter);

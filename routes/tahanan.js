@@ -8,4 +8,8 @@ router.post('/edit',tahananController.addTahanan, tahananController.update);
 router.get('/detail/:id',tahananController.detail);
 router.get('/edit/:id',tahananController.edit);
 router.get('/delete/:id',tahananController.delete);
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    tahananController.cetakLaporanTahanan(req, res);
+});
 module.exports = router;

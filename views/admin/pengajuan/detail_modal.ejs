@@ -25,17 +25,17 @@
     <h5 class="card-title"><b>Status :</b> <%= pengajuan.status_pengajuan  %></h5>
 
     <div class="mt-4">
-            <% if (pengajuan.status_pengajuan !== 'approved' && pengajuan.status_pengajuan !== 'rejected') { %>
+            <% if (pengajuan.status_pengajuan !== 'Diterima' && pengajuan.status_pengajuan !== 'Ditolak') { %>
               <a href="/pengajuan/approve/<%= pengajuan.id %>" class="btn btn-success btn-lg">
                 <i class="bi bi-check-circle"></i> Approve
               </a>
               <a href="/pengajuan/reject/<%= pengajuan.id %>" class="btn btn-danger btn-lg">
                 <i class="bi bi-x-circle"></i> Reject
               </a>
-            <% } else if (pengajuan.status_pengajuan === 'approved') { %>
-              <span class="badge bg-success">Approved</span>
-            <% } else if (pengajuan.status_pengajuan === 'rejected') { %>
-              <span class="badge bg-danger">Rejected</span>
+            <% } else if (pengajuan.status_pengajuan === 'Diterima') { %>
+              <span class="badge bg-success">Diterima</span>
+            <% } else if (pengajuan.status_pengajuan === 'Ditolak') { %>
+              <span class="badge bg-danger">Ditolak</span>
             <% } %>
           </div>
         </div>

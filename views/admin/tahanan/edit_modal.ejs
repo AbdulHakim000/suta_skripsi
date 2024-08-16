@@ -37,13 +37,33 @@
                         <label for="tmp_lahir">Tempat Lahir</label>
                         <input type="text" name="tmp_lahir" class="form-control" id="tmp_lahir" required value="<%= tahanan.tmp_lahir  %>">
                     </div>
+                    <!-- <div class="form-group">
+                        <label for="provinsi">Provinsi</label>
+                        <input type="text" name="provinsi" class="form-control" id="provinsi" required>
+                    </div> -->
                     <div class="form-group">
                         <label for="provinsi">Provinsi</label>
-                        <input type="text" name="provinsi" class="form-control" id="provinsi" required value="<%= tahanan.provinsi%>">
+                        <select name="provinsi" id="provinsi" class="form-control" required>
+                            <option value="<%= tahanan.provinsi  %>"><%= tahanan.provinsi %></option>
+                            <% provinsi.forEach(function(provinsi) { %>
+                                <option value="<%= provinsi.id_provinsi %>"><%= provinsi.nama_provinsi %></option>
+                            <% }); %>
+                        </select>
                     </div>
+                    <!-- <div class="form-group">
+                        <label for="kabupaten">Kabupaten</label>
+                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required>
+                    </div> -->
                     <div class="form-group">
                         <label for="kabupaten">Kabupaten</label>
-                        <input type="text" name="kabupaten" class="form-control" id="kabupaten" required value="<%= tahanan.kabupaten  %>">
+                        <select name="kabupaten" id="kabupaten" class="form-control" required>
+                            <option value="<%= tahanan.kabupaten  %>"><%= tahanan.kabupaten  %></option>
+                            <% kabupaten.forEach(function(kabupaten) { %>
+                                <option value="<%= kabupaten.id_kabupaten %>" data-provinsi="<%= kabupaten.id_provinsi %>">
+                                    <%= kabupaten.nama_kabupaten %>
+                                </option>
+                            <% }); %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="kecamatan">Kecamatan</label>
@@ -123,6 +143,30 @@
 </div>
 </form>
 </div>
+        <script>
+            document.getElementById('provinsi').addEventListener('change', function() {
+                const selectedProvinsi = this.value;
+                const kabupatenSelect = document.getElementById('kabupaten');
+                const kabupatenOptions = kabupatenSelect.querySelectorAll('option');
+
+                // Reset options kabupaten kecuali option default
+                kabupatenOptions.forEach(option => {
+                    if (option.value !== "") {
+                        option.style.display = 'none'; // Sembunyikan semua opsi
+                    }
+                });
+
+                // Tampilkan kabupaten yang sesuai dengan provinsi yang dipilih
+                kabupatenOptions.forEach(option => {
+                    if (option.dataset.provinsi === selectedProvinsi) {
+                        option.style.display = 'block'; // Tampilkan opsi yang sesuai
+                    }
+                });
+
+                // Reset pilihan kabupaten
+                kabupatenSelect.value = '';
+            });
+        </script>
 
 <script>
             // Fungsi untuk format tanggal dan waktu

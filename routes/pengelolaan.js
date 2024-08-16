@@ -2,6 +2,7 @@ const router = require('express').Router();
 const pengelolaanController = require('../controllers/pengelolaanController');
 
 router.get('/', pengelolaanController.index);
+router.get('/pengajuan/', pengelolaanController.index);
 router.get('/tambah', pengelolaanController.tambah);
 router.post('/add', pengelolaanController.addFoto, pengelolaanController.add);
 router.post('/edit', pengelolaanController.addFoto, pengelolaanController.update);

@@ -8,4 +8,8 @@ router.post('/edit', pembesukController.update);
 router.get('/detail/:nik',pembesukController.detail);
 router.get('/edit/:nik',pembesukController.edit);
 router.get('/delete/:nik',pembesukController.delete);
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    pembesukController.cetakLaporanPembesuk(req, res);
+});
 module.exports = router;

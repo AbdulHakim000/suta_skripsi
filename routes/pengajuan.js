@@ -3,11 +3,30 @@ const pengajuanController = require('../controllers/pengajuanController');
 
 router.get('/', pengajuanController.index);
 router.get('/admin', pengajuanController.indexAdmin);
+router.get('/admin/belum-diproses', pengajuanController.indexAdminBelum);
 router.post('/add',pengajuanController.addFoto, pengajuanController.add);
 router.post('/edit',pengajuanController.addFoto, pengajuanController.update);
+router.post('/edit/admin',pengajuanController.addFoto, pengajuanController.updateAdmin);
 router.get('/detail/:id',pengajuanController.detail);
 router.get('/edit/:id',pengajuanController.edit);
 router.get('/delete/:id',pengajuanController.delete);
+
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    pengajuanController.cetakLaporanPengajuan(req, res);
+});
+router.get('/belum/cetak', (req, res) => {
+    console.log('Route accessed');
+    pengajuanController.cetakLaporanPengajuanBelum(req, res);
+});
+router.get('/terima/cetak', (req, res) => {
+    console.log('Route accessed');
+    pengajuanController.cetakLaporanPengajuan(req, res);
+});
+router.get('/tolak/cetak', (req, res) => {
+    console.log('Route accessed');
+    pengajuanController.cetakLaporanPengajuan(req, res);
+});
 
     // Rute untuk Approve
     router.get('/approve/:id', (req, res) => {

@@ -8,4 +8,8 @@ router.post('/edit',jaksaController.addJaksa, jaksaController.update);
 router.get('/detail/:nip',jaksaController.detail);
 router.get('/edit/:nip',jaksaController.edit);
 router.get('/delete/:nip',jaksaController.delete);
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    jaksaController.cetakLaporanJaksa(req, res);
+});
 module.exports = router;
