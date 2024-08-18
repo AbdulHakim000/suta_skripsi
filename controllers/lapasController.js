@@ -1,7 +1,21 @@
 const lapas = require('../models/lapasModel');
-const path = require('path');
 const multer = require('multer');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
+const mysql = require('mysql');
+const { promisify } = require('util');
+
+// Buat koneksi dan promisify query
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'suta_db'
+});
+
+const query = promisify(connection.query).bind(connection);
 // Konfigurasi penyimpanan Foto Jaksa
 const storageLapas = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -265,4 +279,172 @@ module.exports = {
         }
     })
     },
+
+    cetakPDF: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_lapas.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+    doc.fontSize(12)
+        .font('Helvetica-Bold')
+        .text('LAPORAN DATA LAPAS', 260, 160)
+        .moveDown();
+
+        // bagian isi tabel
+
+    try {
+        const result = await query('SELECT * FROM lapas');
+        console.log('Query result:', result);
+        const lapass = result;
+
+        if (!Array.isArray(lapass)) {
+            throw new Error('Hasil query bukan array');
+        }
+        const tableTop = 200;
+        const rowSpacing = 20;
+        const columnWidths = [30, 130, 350]; // Lebar setiap kolom
+        const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0) + 60; // Total lebar tabel
+        const pangkatColumnEndX = 570; // posisi x akhir kolom Pangkat
+
+        // Fungsi untuk menggambar garis horizontal
+        function drawHorizontalLine(y) {
+            doc.moveTo(60, y)
+                .lineTo(pangkatColumnEndX, y, y)
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar garis vertikal
+        function drawVerticalLine(x) {
+            doc.moveTo(x, tableTop - 10)
+                .lineTo(x, tableTop + (rowSpacing - 0.5) * (lapass.length + 1))
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+        function drawTable() {
+            // Header tabel
+            doc.font('Helvetica-Bold')
+                .fontSize(10) // Ukuran font header tabel
+                .text('No', 70, tableTop)
+                .text('Nama Lapas', 120, tableTop)
+                .text('Alamat Lapas', 370, tableTop)
+
+            drawHorizontalLine(tableTop + 15); // Garis bawah header
+            drawHorizontalLine(tableTop + -10); // Garis bawah header
+
+            // Garis vertikal kolom
+            let x = 60;
+            columnWidths.forEach((width) => {
+                drawVerticalLine(x);
+                x += width;
+            });
+            // Garis vertikal penutup di samping kolom Pangkat
+            drawVerticalLine(pangkatColumnEndX);
+            // Data tabel
+            doc.font('Helvetica')
+                .fontSize(8); // Ukuran font data tabel
+            lapass.forEach((lapas, i) => {
+                const y = tableTop + (i + 1) * rowSpacing;
+
+                doc.text(i + 1, 70, y)
+                    .text(lapas.nama_lapas,94, y)
+                    .text(lapas.alamat, 230, y)
+                drawHorizontalLine(y + 14); // Garis bawah setiap baris data
+            });
+        }
+
+        // Panggil fungsi untuk menggambar tabel
+        drawTable();
+
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 360, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_lapas.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
 }

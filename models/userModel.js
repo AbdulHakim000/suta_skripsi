@@ -2,6 +2,30 @@ module.exports = {
     fetchData: (db, callback) => {
         db.query("SELECT * FROM user", callback);
     },
+    fetchDataAdmin: (db, callback) => {
+        db.query("SELECT * FROM user WHERE role = 'admin'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
+    fetchDataStaff: (db, callback) => {
+        db.query("SELECT * FROM user WHERE role = 'staff'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
+    fetchDataPublic: (db, callback) => {
+        db.query("SELECT * FROM user WHERE role = 'public'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
     findByEmail: async (db, email) => {
         return new Promise((resolve, reject) => {
             db.query('SELECT * FROM user WHERE email = ?', [email], (err, results) => {

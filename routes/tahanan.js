@@ -2,6 +2,9 @@ const router = require('express').Router();
 const tahananController = require('../controllers/tahananController');
 
 router.get('/', tahananController.index);
+router.get('/narkotika', tahananController.indexNarkotika);
+router.get('/oharda', tahananController.indexOharda);
+router.get('/kamtibum', tahananController.indexKamtibum);
 router.get('/tambah', tahananController.tambah);
 router.post('/add', tahananController.addTahanan, tahananController.add);
 router.post('/edit',tahananController.addTahanan, tahananController.update);
@@ -11,5 +14,17 @@ router.get('/delete/:id',tahananController.delete);
 router.get('/cetak', (req, res) => {
     console.log('Route accessed');
     tahananController.cetakLaporanTahanan(req, res);
+});
+router.get('/cetak/narkotika', (req, res) => {
+    console.log('Route accessed');
+    tahananController.cetakLaporanTahananNarkotika(req, res);
+});
+router.get('/cetak/oharda', (req, res) => {
+    console.log('Route accessed');
+    tahananController.cetakLaporanTahananOharda(req, res);
+});
+router.get('/cetak/kamtibum', (req, res) => {
+    console.log('Route accessed');
+    tahananController.cetakLaporanTahananKamtibum(req, res);
 });
 module.exports = router;

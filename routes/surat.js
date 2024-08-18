@@ -8,4 +8,12 @@ router.post('/edit', suratController.update);
 router.get('/detail/:id',suratController.detail);
 router.get('/edit/:id',suratController.edit);
 router.get('/delete/:id',suratController.delete);
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    suratController.cetakPDF(req, res);
+});
+router.get('/cetak/:id', (req, res) => {
+    console.log('Route accessed');
+    suratController.cetakPDFSurat(req, res);
+});
 module.exports = router;

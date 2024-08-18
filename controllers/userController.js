@@ -2,7 +2,21 @@ const user = require('../models/userModel');
 const path = require('path');
 const multer = require('multer');
 const bcrypt = require('bcrypt'); // Import bcrypt
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 
+const mysql = require('mysql');
+const { promisify } = require('util');
+
+// Buat koneksi dan promisify query
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'suta_db'
+});
+
+const query = promisify(connection.query).bind(connection);
 // Konfigurasi penyimpanan Foto Jaksa
 const storageUser = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -177,6 +191,73 @@ module.exports = {
                     title: 'Halaman user',
                     user: req.session.user,
                     users: rows
+                });
+            }
+        });
+    },
+
+    indexAdmin: (req, res) => {
+        user.fetchDataAdmin(req.db, (err, rows) => {
+            if (err) {
+                return res.render('user/index', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                    error: 'Terjadi kesalahan saat mengambil data User.', // Menambahkan pesan error
+                    users: [] // Pastikan ini diset agar tidak undefined
+                });
+            } else {
+                res.render('user/indexAdmin', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    users: rows,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                });
+            }
+        });
+    },
+    indexStaff: (req, res) => {
+        user.fetchDataStaff(req.db, (err, rows) => {
+            if (err) {
+                return res.render('user/index', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                    error: 'Terjadi kesalahan saat mengambil data User.', // Menambahkan pesan error
+                    users: [] // Pastikan ini diset agar tidak undefined
+                });
+            } else {
+                res.render('user/indexStaff', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    users: rows,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                });
+            }
+        });
+    },
+    indexPublic: (req, res) => {
+        user.fetchDataPublic(req.db, (err, rows) => {
+            if (err) {
+                return res.render('user/index', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    user: req.session.user,
+                    userRole: req.session.user.role,
+                    error: 'Terjadi kesalahan saat mengambil data User.', // Menambahkan pesan error
+                    users: [] // Pastikan ini diset agar tidak undefined
+                });
+            } else {
+                res.render('user/indexPublic', {
+                    layout: 'layout/admin/main',
+                    title: 'Halaman User',
+                    users: rows,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
                 });
             }
         });
@@ -464,4 +545,857 @@ module.exports = {
         }
     })
     },
+
+    cetakPDF: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_jaksa.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+    doc.fontSize(12)
+        .font('Helvetica-Bold')
+        .text('LAPORAN DATA USER', 260, 160)
+        .moveDown();
+        // bagian isi tabel
+
+    try {
+        const result = await query('SELECT * FROM user');
+        console.log('Query result:', result);
+        const users = result;
+
+        if (!Array.isArray(users)) {
+            throw new Error('Hasil query bukan array');
+        }
+        const tableTop = 200;
+        const rowSpacing = 20;
+        const columnWidths = [30, 150, 220, 100]; // Lebar setiap kolom
+        const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0) + 60; // Total lebar tabel
+        const pangkatColumnEndX = 570; // posisi x akhir kolom Pangkat
+
+        // Fungsi untuk menggambar garis horizontal
+        function drawHorizontalLine(y) {
+            doc.moveTo(60, y)
+                .lineTo(pangkatColumnEndX, y, y)
+                .stroke();
+        }
+        // Fungsi untuk menggambar garis vertikal
+        function drawVerticalLine(x) {
+            doc.moveTo(x, tableTop - 10)
+                .lineTo(x, tableTop + (rowSpacing - 0.5) * (users.length + 1))
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+        function drawTable() {
+            // Header tabel
+            doc.font('Helvetica-Bold')
+                .fontSize(10) // Ukuran font header tabel
+                .text('No', 70, tableTop)
+                .text('Username', 120, tableTop)
+                .text('email', 270, tableTop)
+                .text('Role', 500, tableTop);
+            drawHorizontalLine(tableTop + 15); // Garis bawah header
+            drawHorizontalLine(tableTop + -10); // Garis bawah header
+            // Garis vertikal kolom
+            let x = 60;
+            columnWidths.forEach((width) => {
+                drawVerticalLine(x);
+                x += width;
+            });
+            // Garis vertikal penutup di samping kolom Pangkat
+            drawVerticalLine(pangkatColumnEndX);
+            // Data tabel
+            doc.font('Helvetica')
+                .fontSize(10); // Ukuran font data tabel
+            users.forEach((user, i) => {
+                const y = tableTop + (i + 1) * rowSpacing;
+
+                doc.text(i + 1, 70, y)
+                    .text(user.username, 93, y)
+                    .text(user.email, 244, y)
+                    .text(user.role, 500, y);
+
+                drawHorizontalLine(y + 14); // Garis bawah setiap baris data
+            });
+        }
+
+        // Panggil fungsi untuk menggambar tabel
+        drawTable();
+
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 360, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_jaksa.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
+
+    cetakPDFAdmin: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_jaksa.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+    doc.fontSize(12)
+        .font('Helvetica-Bold')
+        .text('LAPORAN DATA USER ROLE ADMIN', 220, 160)
+        .moveDown();
+        // bagian isi tabel
+
+    try {
+        const result = await query("SELECT * FROM user WHERE role ='admin'");
+        console.log('Query result:', result);
+        const users = result;
+
+        if (!Array.isArray(users)) {
+            throw new Error('Hasil query bukan array');
+        }
+        const tableTop = 200;
+        const rowSpacing = 20;
+        const columnWidths = [30, 150, 220, 100]; // Lebar setiap kolom
+        const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0) + 60; // Total lebar tabel
+        const pangkatColumnEndX = 570; // posisi x akhir kolom Pangkat
+
+        // Fungsi untuk menggambar garis horizontal
+        function drawHorizontalLine(y) {
+            doc.moveTo(60, y)
+                .lineTo(pangkatColumnEndX, y, y)
+                .stroke();
+        }
+        // Fungsi untuk menggambar garis vertikal
+        function drawVerticalLine(x) {
+            doc.moveTo(x, tableTop - 10)
+                .lineTo(x, tableTop + (rowSpacing - 0.5) * (users.length + 1))
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+        function drawTable() {
+            // Header tabel
+            doc.font('Helvetica-Bold')
+                .fontSize(10) // Ukuran font header tabel
+                .text('No', 70, tableTop)
+                .text('Username', 120, tableTop)
+                .text('email', 270, tableTop)
+                .text('Role', 500, tableTop);
+            drawHorizontalLine(tableTop + 15); // Garis bawah header
+            drawHorizontalLine(tableTop + -10); // Garis bawah header
+            // Garis vertikal kolom
+            let x = 60;
+            columnWidths.forEach((width) => {
+                drawVerticalLine(x);
+                x += width;
+            });
+            // Garis vertikal penutup di samping kolom Pangkat
+            drawVerticalLine(pangkatColumnEndX);
+            // Data tabel
+            doc.font('Helvetica')
+                .fontSize(10); // Ukuran font data tabel
+            users.forEach((user, i) => {
+                const y = tableTop + (i + 1) * rowSpacing;
+
+                doc.text(i + 1, 70, y)
+                    .text(user.username, 93, y)
+                    .text(user.email, 244, y)
+                    .text(user.role, 500, y);
+
+                drawHorizontalLine(y + 14); // Garis bawah setiap baris data
+            });
+        }
+
+        // Panggil fungsi untuk menggambar tabel
+        drawTable();
+
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 360, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_jaksa.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
+
+cetakPDFStaff: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_jaksa.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+    doc.fontSize(12)
+        .font('Helvetica-Bold')
+        .text('LAPORAN DATA USER ROLE STAFF', 220, 160)
+        .moveDown();
+        // bagian isi tabel
+
+    try {
+        const result = await query("SELECT * FROM user WHERE role ='staff'");
+        console.log('Query result:', result);
+        const users = result;
+
+        if (!Array.isArray(users)) {
+            throw new Error('Hasil query bukan array');
+        }
+        const tableTop = 200;
+        const rowSpacing = 20;
+        const columnWidths = [30, 150, 220, 100]; // Lebar setiap kolom
+        const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0) + 60; // Total lebar tabel
+        const pangkatColumnEndX = 570; // posisi x akhir kolom Pangkat
+
+        // Fungsi untuk menggambar garis horizontal
+        function drawHorizontalLine(y) {
+            doc.moveTo(60, y)
+                .lineTo(pangkatColumnEndX, y, y)
+                .stroke();
+        }
+        // Fungsi untuk menggambar garis vertikal
+        function drawVerticalLine(x) {
+            doc.moveTo(x, tableTop - 10)
+                .lineTo(x, tableTop + (rowSpacing - 0.5) * (users.length + 1))
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+        function drawTable() {
+            // Header tabel
+            doc.font('Helvetica-Bold')
+                .fontSize(10) // Ukuran font header tabel
+                .text('No', 70, tableTop)
+                .text('Username', 120, tableTop)
+                .text('email', 270, tableTop)
+                .text('Role', 500, tableTop);
+            drawHorizontalLine(tableTop + 15); // Garis bawah header
+            drawHorizontalLine(tableTop + -10); // Garis bawah header
+            // Garis vertikal kolom
+            let x = 60;
+            columnWidths.forEach((width) => {
+                drawVerticalLine(x);
+                x += width;
+            });
+            // Garis vertikal penutup di samping kolom Pangkat
+            drawVerticalLine(pangkatColumnEndX);
+            // Data tabel
+            doc.font('Helvetica')
+                .fontSize(10); // Ukuran font data tabel
+            users.forEach((user, i) => {
+                const y = tableTop + (i + 1) * rowSpacing;
+
+                doc.text(i + 1, 70, y)
+                    .text(user.username, 93, y)
+                    .text(user.email, 244, y)
+                    .text(user.role, 500, y);
+
+                drawHorizontalLine(y + 14); // Garis bawah setiap baris data
+            });
+        }
+
+        // Panggil fungsi untuk menggambar tabel
+        drawTable();
+
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 360, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_jaksa.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
+
+cetakPDFPublic: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_jaksa.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+    doc.fontSize(12)
+        .font('Helvetica-Bold')
+        .text('LAPORAN DATA USER ROLE PUBLIC', 220, 160)
+        .moveDown();
+        // bagian isi tabel
+
+    try {
+        const result = await query("SELECT * FROM user WHERE role ='public'");
+        console.log('Query result:', result);
+        const users = result;
+
+        if (!Array.isArray(users)) {
+            throw new Error('Hasil query bukan array');
+        }
+        const tableTop = 200;
+        const rowSpacing = 20;
+        const columnWidths = [30, 150, 220, 100]; // Lebar setiap kolom
+        const tableWidth = columnWidths.reduce((acc, width) => acc + width, 0) + 60; // Total lebar tabel
+        const pangkatColumnEndX = 570; // posisi x akhir kolom Pangkat
+
+        // Fungsi untuk menggambar garis horizontal
+        function drawHorizontalLine(y) {
+            doc.moveTo(60, y)
+                .lineTo(pangkatColumnEndX, y, y)
+                .stroke();
+        }
+        // Fungsi untuk menggambar garis vertikal
+        function drawVerticalLine(x) {
+            doc.moveTo(x, tableTop - 10)
+                .lineTo(x, tableTop + (rowSpacing - 0.5) * (users.length + 1))
+                .stroke();
+        }
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+        function drawTable() {
+            // Header tabel
+            doc.font('Helvetica-Bold')
+                .fontSize(10) // Ukuran font header tabel
+                .text('No', 70, tableTop)
+                .text('Username', 120, tableTop)
+                .text('email', 270, tableTop)
+                .text('Role', 500, tableTop);
+            drawHorizontalLine(tableTop + 15); // Garis bawah header
+            drawHorizontalLine(tableTop + -10); // Garis bawah header
+            // Garis vertikal kolom
+            let x = 60;
+            columnWidths.forEach((width) => {
+                drawVerticalLine(x);
+                x += width;
+            });
+            // Garis vertikal penutup di samping kolom Pangkat
+            drawVerticalLine(pangkatColumnEndX);
+            // Data tabel
+            doc.font('Helvetica')
+                .fontSize(10); // Ukuran font data tabel
+            users.forEach((user, i) => {
+                const y = tableTop + (i + 1) * rowSpacing;
+
+                doc.text(i + 1, 70, y)
+                    .text(user.username, 93, y)
+                    .text(user.email, 244, y)
+                    .text(user.role, 500, y);
+
+                drawHorizontalLine(y + 14); // Garis bawah setiap baris data
+            });
+        }
+
+        // Panggil fungsi untuk menggambar tabel
+        drawTable();
+
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 360, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_jaksa.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
+
+cetakPDFSurat: async (req, res) => {
+
+    function formatIndonesianDate(date) {
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        const dayName = days[date.getDay()];
+        const day = date.getDate();
+        const month = months[date.getMonth()];
+        const year = date.getFullYear();
+        return `${dayName},${day} ${month} ${year}`;
+    }
+
+    const reportDir = path.join(__dirname, '../public/reports');
+
+    if (!fs.existsSync(reportDir)) {
+        fs.mkdirSync(reportDir, { recursive: true });
+    }
+
+    const outputPath = path.join(reportDir, 'laporan_jaksa.pdf');
+    const doc = new PDFDocument({
+        size: 'A4',
+        margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const writeStream = fs.createWriteStream(outputPath);
+    doc.pipe(writeStream);
+
+    // bagian header
+    const logoPath = path.join(__dirname, '../public/images/kejaksaan.png');
+    doc.image(logoPath, 60, 40, { width: 140 })
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .text('KEJAKSAAN NEGERI BANJARMASIN', 166, 57);
+
+    doc.fontSize(10)
+        .font('Helvetica')
+        .text('Jl. Brig Jend. Hasan Basri No.3, RW.02, Pangeran,', 220, 80);  
+    doc.fontSize(10)
+        .text('Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70124', 173, 95);
+
+    doc.moveTo(60, 130)
+        .lineTo(540, 130)
+        .stroke();
+    doc.moveTo(60, 133)
+        .lineTo(540, 133)
+        .stroke();
+
+
+    try {
+        const id = parseInt(req.params.id);
+        const result = await query("SELECT surat.*, tahanan.nama_tahanan, tahanan.tmp_lahir, tahanan.tgl_lahir, tahanan.jns_kelamin, tahanan.pekerjaan AS pekerjaan_tahanan, tahanan.perkara, pembesuk.nama_pembesuk, pembesuk.provinsi, pembesuk.kabupaten, pembesuk.kecamatan, pembesuk.kelurahan, pembesuk.pekerjaan AS pekerjaan_pembesuk FROM surat INNER JOIN tahanan ON surat.registrasi_tahanan = tahanan.registrasi_tahanan INNER JOIN pembesuk ON surat.nik = pembesuk.nik");
+        console.log('Query result:', result);
+        const surat = result.find(s => s.id_surat === id);
+
+    
+
+        // Fungsi untuk menggambar baris dan garis secara otomatis
+       
+            // title
+            const a = 60;
+            const b = 200;
+            const c = 190;
+
+
+
+            doc.text(':', c, 230)
+            doc.text(':', c, 250)
+            doc.text(':', c, 330)
+            doc.text(':', c, 350)
+            doc.text(':', c, 420)
+            doc.text(':', c, 440)
+            doc.text(':', c, 460)
+            doc.text(':', c, 480)
+            doc.text(':', c, 500)
+            doc.text(':', c, 520)
+            doc.text(':', c, 540)
+            doc.text(':', c, 560)
+            doc.text(':', c, 580)
+
+            // title
+            doc.font('Helvetica-Bold')
+                .fontSize(14)
+                .text('SURAT IZIN MENGUNJUNGI TAHANAN',180, 150)
+
+                .text('NOMOR: 0.3.10/                                                                         /2024',100, 170)
+                .text(surat.perkara,210, 170)
+                .fontSize(14)
+                .text('Data Pembesuk', a, 210)
+                .fontSize(10)
+                .font('Helvetica')
+
+                .text('Nama', a, 230)
+                .text('Alamat', a, 250)
+                .text('Pekerjaan', a, 330)
+                .text('Hubungan', a, 350)
+
+                .fontSize(14)
+                .font('Helvetica-Bold')
+                .text('Data Tahanan', a, 400)
+                .fontSize(10)
+                .font('Helvetica')
+
+                .text('Nama Lengkap', a, 420)
+                .text('Tempat Lahir', a, 440)
+                .text('Jenis Kelamin', a, 460)
+                .text('Pekerjaan', a, 480)
+                .text('Registrasi Tahanan', a, 500)
+                .text('Keperluan', a, 520)
+                .text('Izin Berlaku', a, 540)
+                .text('Tanggal Besuk Pertama', a, 560)
+                .text('Tanggal Besuk Kedua', a, 580);
+
+            // isi data
+
+            const tanggal1 = formatIndonesianDate(surat.tanggal1);
+            const tanggal2 = formatIndonesianDate(surat.tanggal1);
+            doc.font('Helvetica')
+                .fontSize(10); // Ukuran font data tabel
+                doc.text(surat.nama_pembesuk, b, 230)
+                    .text(surat.kelurahan, b, 250)
+                    .text(surat.kecamatan, b, 270)
+                    .text(surat.kabupaten, b, 290)
+                    .text(surat.provinsi, b, 310)
+                    .text(surat.pekerjaan_pembesuk, b, 330)
+                    .text(surat.hubungan, b, 350)
+
+                    .text(surat.nama_tahanan, b, 420)
+                    .text(surat.tmp_lahir, b, 440)
+                    .text(surat.jns_kelamin, b, 460)
+                    .text(surat.pekerjaan_tahanan, b, 480)
+                    .text(surat.registrasi_tahanan, b, 500)
+                    .text('Bertamu, Mengirim pakaian, atau Makanan', b, 520)
+                    .text('08.00 sampai dengan selesai', b, 540)
+                    .text(tanggal1, b, 560)
+                    .text(tanggal2, b, 580);
+
+    
+
+        // footer tabel
+        
+        const currentDate = new Date();
+        const formattedDate = formatIndonesianDate(currentDate);
+        doc.fontSize(8)
+             .text(`Banjarmasin, ${formattedDate}`, 344, 660 );
+        doc.fontSize(8)
+            .text('An. KEPALA KEJAKSAAN NEGERI BANJARMASIN', 320, 674);
+        doc.fontSize(8)
+            .text('An. KEPALA SEKSI TINDAK PIDANA UMUM', 330, 688);
+        doc.fontSize(8)
+            .text('HABIBI, S.H', 390, 760);
+        doc.fontSize(8)
+            .text('JAKSA MUDA Nip. 19820302 200912 1 003', 330, 774);
+        
+        const ttdPath = path.join(__dirname, '../public/images/ttd.png');
+        doc.image(ttdPath, 340, 700, { width: 140 })
+
+        doc.end();
+
+
+
+    } catch (err) {
+        console.error('Error fetching jaksa data:', err);
+        res.status(500).send('Error generating PDF');
+    }
+
+    writeStream.on('finish', () => {
+        try {
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'inline; filename="laporan_Surat_Izin_Besuk.pdf"');
+
+            const fileStream = fs.createReadStream(outputPath);
+            fileStream.pipe(res);
+
+            fileStream.on('end', () => {
+                fs.unlink(outputPath, (err) => {
+                    if (err) console.error('Error deleting file:', err);
+                });
+            });
+
+        } catch (err) {
+            console.error('Error during PDF generation:', err);
+            res.status(500).send('Error generating PDF');
+        }
+    });
+},
 }

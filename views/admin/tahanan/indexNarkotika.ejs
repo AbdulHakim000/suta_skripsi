@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 
@@ -22,90 +22,97 @@
     <div class="container-fluid">
         <div class="row mt-4">
             <div class="col-md-12 text-center">
-                <h1>Data Surat Izin Besuk</h1>
+                <h1>Data Tahanan Perkara Narkotika</h1>
             </div>
         </div>
     
         <div class="row mt-2">
             <div class="col-md-12">
-                <a href="/surat/tambah">
+                <a href="/tahanan/tambah">
                 <button type="button" class="btn btn-primary mt-4">Tambah Data</button>
                 </a>
             </div>
         </div>
-        <br>
 
-        <h6 style="color:rgb(146, 146, 146)">Cetak Data</h6>
-        <div class="row mt-2"></div>
-                <a href="/surat/cetak" class="btn btn-info ms-auto" target="_blank">PDF</a>
+        <div class="row mt-2">
+    <div class="col-md-12 d-flex justify-content-between">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a href="/tahanan">
+                    <button type="button" class="btn btn-outline-primary">All</button>
+                </a>
+                <a href="/tahanan/narkotika">
+                    <button type="button" class="btn btn-outline-primary">Narkotika</button>
+                </a>
+                <a href="/tahanan/oharda">
+                    <button type="button" class="btn btn-outline-primary">Oharda</button>
+                </a>
+                <a href="/tahanan/kamtibum">
+                    <button type="button" class="btn btn-outline-primary">Kamtibum</button>
+                </a>
+            </div> 
+
+            <a href="/tahanan/cetak/narkotika" class="btn btn-info ms-auto" target="_blank">PDF</a>
         </div>
-        <br>
-
+    </div>
+    
         <div class="row mt-2">
             <div class="col-md-12">
 
-                   <table id="tableSurat" class="table table-striped" style="width:100%"> 
+                   <table id="tableTahanan" class="table table-striped table-centered" style="width:100%"> 
                     <thead>
                     <tr>
+
                         <th style="text-align: center; vertical-align: middle;">No</th>
-                        <th style="text-align: center; vertical-align: middle;">NIK Pembesuk</th>
-                        <th style="text-align: center; vertical-align: middle;">Registrasi Tahanan</th>
+                        <th style="text-align: center; vertical-align: middle;">Registrasi</th>
                         <th style="text-align: center; vertical-align: middle;">Nama Tahanan</th>
-                        <th style="text-align: center; vertical-align: middle;">Hubungan</th>
-                        <th style="text-align: center; vertical-align: middle;">Tanggal Besuk Pertama</th>
-                        <th style="text-align: center; vertical-align: middle;">Tanggal Besuk Kedua</th>
-                        <th style="text-align: center; vertical-align: middle;  width: 250px;">Action</th>
-                        <th style="text-align: center; vertical-align: middle;">FILE</th>
+                        <th style="text-align: center; vertical-align: middle;">Perkara</th>
+                        <th style="text-align: center; vertical-align: middle;">Izin Pembesukan</th>
+                        <th style="text-align: center; vertical-align: middle; width: 250px;">Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    
-                        <% surats.forEach((surat, i) => { %>
+                        <% tahanans.forEach((tahanan, i) => { %>
                          
                             <tr>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <%= i + 1  %>
-                                </td>
+                                    <%= i + 1 %></td>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <%= surat.nik  %>
-                                </td>
+                                    <%= tahanan.registrasi_tahanan %></td>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <%= surat.registrasi_tahanan  %>
-                                </td>
+                                    <%= tahanan.nama_tahanan %></td>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <%= surat.nama_tahanan %>
-                                </td>
+                                    <%= tahanan.perkara %></td>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <%= surat.hubungan  %>
-                                </td>
-                                <td style="text-align: center; vertical-align: middle;">  
-                                    <%= new Date(surat.tanggal1).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }).replace(/-/g, '/') %>
-                                </td>
-                                <td style="text-align: center; vertical-align: middle;"> 
-                                    <%= new Date(surat.tanggal2).toLocaleDateString('en-CA', { timeZone: 'Asia/Makassar' }).replace(/-/g, '/') %>
-                                </td>
+                                        <% 
+                                            const currentDate = new Date(); // Tanggal saat ini
+                                            const tglSuratTuntutan = new Date(tahanan.tgl_surat_tuntutan);
+                                            const differenceInDays = (currentDate - tglSuratTuntutan) / (1000 * 60 * 60 * 24); // Menghitung selisih hari
+                                            const Status = differenceInDays > 14;
+                                        %>
+                                        <% if (Status) { %>
+                                            <i class="fa-solid fa-check fa-2xl" style="color: #00ff1e;"></i>
+                                        <% } else { %>
+                                            <i class="fa-solid fa-xmark fa-xl" style="color: #ff0000;"></i>
+                                        <% } %>
+                                    </td>
                                 <td style="text-align: center; vertical-align: middle;">
-                                    <a href="/surat/edit/<%= surat.id_surat %>" class="btn btn-warning badge rounded-pill" style="color: white;">
-  <i class="bi bi-pencil-square"></i> Edit
-</a>
+                                
+                                     <a href="/tahanan/edit/<%= tahanan.id %>" class="btn btn-warning badge rounded-pill" style="color: white;">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
                                     <% if (userRole === 'admin') { %>  <!-- Only render delete button for admin -->
-                                    <a href="/surat/delete/<%= surat.id_surat  %>" onclick="return confirmDelete(event)">
+                                    <a href="/tahanan/delete/<%= tahanan.id %>" onclick="return confirmDelete(event)">
                                         <button class="btn btn-danger badge rounded-pill">
                                             <i class="bi bi-trash"></i> Hapus
                                         </button>
                                     </a>
-                                     <% } %>
-                                    <a href="/surat/detail/<%= surat.id_surat  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
-                                    
-                                </td>
-                                <td style="text-align: center; vertical-align: middle;">
-                                    <a href="/surat/cetak/<%= surat.id_surat %>">
-                                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                                    </a>
+                                <% } %>
+
+                                    <a href="/tahanan/detail/<%= tahanan.id  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
                                 </td>
                                 
                             </tr>
-                            
                             <% }) %>
                     </tbody>
                    </table>
@@ -136,21 +143,19 @@ function confirmDelete(event) {
         if (result.isConfirmed) {
             Swal.fire({
                 title: "Terhapus!",
-                text: "Data  Surat Berhasil DiHapus.",
+                text: "Data Tahanan Berhasil DiHapus.",
                 icon: "success"
             }).then(() => {
                 // Redirect to delete URL after confirming
-                window.location.href = `/surat/delete/${id}`;
+                window.location.href = `/tahanan/delete/${id}`;
             });
         }
     });
 
+    
     return false; // Prevent default link action
 }
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     <% if (message && message.type && message.text) { %>
         Swal.fire({
@@ -169,7 +174,7 @@ function confirmDelete(event) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     
  <script>
-    new DataTable('#tableSurat');
+    new DataTable('#tableTahanan');
  </script>
 
 

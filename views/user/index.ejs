@@ -21,17 +21,39 @@
     <div class="container-fluid">
         <div class="row mt-4">
             <div class="col-md-12 text-center">
-                <h1>Data Surat Izin Besuk</h1>
+                <h1>Data User</h1>
             </div>
         </div>
     
         <div class="row mt-2">
             <div class="col-md-12">
-                <a href="/surat/tambah">
+                <a href="/user/tambah">
                 <button type="button" class="btn btn-primary mt-4">Tambah Data</button>
                 </a>
             </div>
         </div>
+        <br>
+
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a href="/user">
+                    <button type="button" class="btn btn-outline-primary">All</button>
+                </a>
+                <a href="/user/admin">
+                    <button type="button" class="btn btn-outline-primary">Admin</button>
+                </a>
+                <a href="/user/staff">
+                    <button type="button" class="btn btn-outline-primary">Staff</button>
+                </a>
+                <a href="/user/public">
+                    <button type="button" class="btn btn-outline-primary">Public</button>
+                </a>
+            </div> 
+
+            <a href="/user/cetak" class="btn btn-info ms-auto" target="_blank">PDF</a>
+        </div>
+    </div>
+
     
         <div class="row mt-2">
             <div class="col-md-12">

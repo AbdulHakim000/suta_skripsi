@@ -76,6 +76,7 @@ app.use(methodOverride("_method"));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded( {extended: false}));
+
 // Route untuk mengupload file
 // app.post('/jaksa/add', jaksaController.addJaksa, jaksaController.add); 
 // app.post('/jaksa/edit', jaksaController.addJaksa, jaksaController.update);
@@ -129,14 +130,14 @@ app.get('/logout', (req, res) => {
 });
 app.use('/jaksa',isAuthenticated, jaksaRouter);
 app.use('/pembesuk',isAuthenticated, pembesukRouter);
-app.use('/surat',isAuthenticated, suratRouter);
+app.use('/surat', suratRouter);
 app.use('/provinsi',isAuthenticated, provinsiRouter);
 app.use('/kabupaten',isAuthenticated, kabupatenRouter);
 app.use('/tahanan',isAuthenticated, tahananRouter);
 app.use('/pengajuan', pengajuanRouter);
 app.use('/pengelolaan',isAuthenticated, pengelolaanRouter);
-app.use('/user',isAuthenticated, userRouter);
-app.use('/lapas',isAuthenticated, lapasRouter);
+app.use('/user', userRouter);
+app.use('/lapas', lapasRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 

@@ -9,4 +9,9 @@ router.post('/edit', pengelolaanController.addFoto, pengelolaanController.update
 router.get('/detail/:id',pengelolaanController.detail);
 router.get('/edit/:id',pengelolaanController.edit);
 router.get('/delete/:id',pengelolaanController.delete);
+
+router.get('/cetak', (req, res) => {
+    console.log('Route accessed');
+    pengelolaanController.cetakPDF(req, res);
+});
 module.exports = router;

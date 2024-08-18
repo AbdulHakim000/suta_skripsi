@@ -18,10 +18,21 @@ router.get('/logout', (req, res) => {
     });
 });
 router.get('/', userController.index);
-router.get('/tambah', userController.index);
+router.get('/admin', userController.indexAdmin);
+router.get('/staff', userController.indexStaff);
+router.get('/public', userController.indexPublic);
+router.get('/tambah', userController.tambah);
 router.post('/add', userController.add);
 router.post('/edit', userController.update);
 router.get('/detail/:id',userController.detail);
 router.get('/edit/:id',userController.edit);
 router.get('/delete/:id',userController.delete);
+router.get('/cetak',userController.cetakPDF);
+router.get('/cetak/admin',userController.cetakPDFAdmin);
+router.get('/cetak/staff',userController.cetakPDFStaff);
+router.get('/cetak/public',userController.cetakPDFPublic);
+router.get('/cetak/:id', (req, res) => {
+    console.log('Route accessed');
+    userController.cetakPDFSurat(req, res);
+});
 module.exports = router;

@@ -17,72 +17,74 @@
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-        
-        <div class="container-fluid">
-        
-            <div class="row mt-4">
-                <div class="col-md-12 text-center">
-                    <h1>Data Pengajuan Yang Belum Diproses</h1>
-                </div>
-            </div>
 
+    <div class="container-fluid">
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <h1>Data User Staff</h1>
+            </div>
+        </div>
+    
         <div class="row mt-2">
             <div class="col-md-12">
-                <a href="/pengajuan/belum/cetak" class="btn btn-info" target="_blank">PDF</a>
+                <a href="/user/tambah">
+                <button type="button" class="btn btn-primary mt-4">Tambah Data</button>
+                </a>
             </div>
         </div>
-<br>
-<h6 style="color:rgb(146, 146, 146)">Fiter</h6>
-        <div class="btn-group" role="group" aria-label="Basic outlined example">
-            <a href="/pengajuan/admin">
-                <button type="button" class="btn btn-outline-primary">All</button>
-            </a>
-            <a href="/pengajuan/admin/belum-diproses">
-                <button type="button" class="btn btn-outline-primary">Belum Diproses</button>
-            </a>
-            <a href="/pengajuan/admin/diterima">
-                <button type="button" class="btn btn-outline-primary">Diterima</button>
-            </a>
-            <a href="/pengajuan/admin/ditolak">
-                <button type="button" class="btn btn-outline-primary">Ditolak</button>
-            </a>
+        <br>
+
+        <div class="col-md-12 d-flex justify-content-between">
+            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                <a href="/user">
+                    <button type="button" class="btn btn-outline-primary">All</button>
+                </a>
+                <a href="/user/admin">
+                    <button type="button" class="btn btn-outline-primary">Admin</button>
+                </a>
+                <a href="/user/staff">
+                    <button type="button" class="btn btn-outline-primary">Staff</button>
+                </a>
+                <a href="/user/public">
+                    <button type="button" class="btn btn-outline-primary">Public</button>
+                </a>
+            </div> 
+
+            <a href="/user/cetak/staff" class="btn btn-info ms-auto" target="_blank">PDF</a>
         </div>
-        
+    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-12">
+    
+        <div class="row mt-2">
+            <div class="col-md-12">
 
-                   <table id="tablepengajuan" class="table table-striped" style="width:100%"> 
+                   <table id="tableUser" class="table table-striped" style="width:100%"> 
                     <thead>
                     <tr>
+
                         <th>Nomor</th>
-                        <th>Nama Pembesuk</th>
-                        <th>Registrasi</th>
-                        <th>Nama Tahanan</th>
-                        <th>Status</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
                         <th>Action</th>
+
                     </tr>
                     </thead>
                     <tbody>
                     
-                        <% allPengajuans.forEach((pengajuan, i) => { %>
+                        <% users.forEach((user, i) => { %>
                          
                             <tr>
                                 <td><%= i + 1  %></td>
-                                <td><%= pengajuan.nama_pembesuk %></td>
-                                <td><%= pengajuan.registrasi_tahanan %></td>
-                                <td><%= pengajuan.nama_tahanan  %></td>
-                                <td><%= pengajuan.status_pengajuan  %></td>
+                                <td><%= user.username  %></td>
+                                <td><%= user.email  %></td>
+                                <td><%= user.role  %></td>
                                 <td>
-                                    <a href="/pengajuan/edit/<%= pengajuan.id %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
-                                    <% if (userRole === 'admin') { %>  <!-- Only render delete button for admin -->
-                                    <a href="/pengajuan/delete/<%= pengajuan.id %>" onclick="return confirmDelete(event)">
-                                        <button class="btn btn-danger badge rounded-pill">
-                                            <i class="bi bi-trash"></i> Hapus
-                                        </button>
+                                    <a href="/user/edit/<%= user.id %>" class="btn btn-warning badge rounded-pill"><i class="bi bi-pencil-square"></i> Edit</a>
+                                    <a href="/user/delete/<%= user.id%>" onclick="return confirmDelete(event)">
+                                        <button class="btn btn-danger badge rounded-pill"><i class="bi bi-trash"></i>Hapus</button>
                                     </a>
-                                     <% } %>
-                                    <a href="/pengajuan/detail/<%= pengajuan.id  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
+                                    <a href="/user/detail/<%= user.id  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
                                 </td>
                                 
                             </tr>
@@ -116,19 +118,19 @@ function confirmDelete(event) {
         if (result.isConfirmed) {
             Swal.fire({
                 title: "Terhapus!",
-                text: "Data pengajuan Berhasil DiHapus.",
+                text: "Data User Berhasil DiHapus.",
                 icon: "success"
             }).then(() => {
                 // Redirect to delete URL after confirming
-                window.location.href = `/pengajuan/delete/${id}`;
+                window.location.href = `/user/delete/${id}`;
             });
         }
     });
 
+    
     return false; // Prevent default link action
 }
 </script>
-
 <script>
     <% if (message && message.type && message.text) { %>
         Swal.fire({
@@ -140,7 +142,6 @@ function confirmDelete(event) {
         });
     <% } %>
 </script>
-
   
 
 
@@ -148,7 +149,7 @@ function confirmDelete(event) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
     
  <script>
-    new DataTable('#tablepengajuan');
+    new DataTable('#tableUser');
  </script>
 
 

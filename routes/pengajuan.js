@@ -4,6 +4,8 @@ const pengajuanController = require('../controllers/pengajuanController');
 router.get('/', pengajuanController.index);
 router.get('/admin', pengajuanController.indexAdmin);
 router.get('/admin/belum-diproses', pengajuanController.indexAdminBelum);
+router.get('/admin/diterima', pengajuanController.indexAdminTerima);
+router.get('/admin/ditolak', pengajuanController.indexAdminTolak);
 router.post('/add',pengajuanController.addFoto, pengajuanController.add);
 router.post('/edit',pengajuanController.addFoto, pengajuanController.update);
 router.post('/edit/admin',pengajuanController.addFoto, pengajuanController.updateAdmin);
@@ -21,11 +23,16 @@ router.get('/belum/cetak', (req, res) => {
 });
 router.get('/terima/cetak', (req, res) => {
     console.log('Route accessed');
-    pengajuanController.cetakLaporanPengajuan(req, res);
+    pengajuanController.cetakLaporanPengajuanTerima(req, res);
 });
 router.get('/tolak/cetak', (req, res) => {
     console.log('Route accessed');
-    pengajuanController.cetakLaporanPengajuan(req, res);
+    pengajuanController.cetakLaporanPengajuanTolak(req, res);
+});
+
+router.get('/cetak/:id', (req, res) => {
+    console.log('Route accessed');
+     pengajuanController.cetakPDFSurat(req, res);
 });
 
     // Rute untuk Approve

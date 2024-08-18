@@ -2,6 +2,30 @@ module.exports = {
     fetchData: (db, callback) => {
         db.query("SELECT * FROM tahanan", callback);
     },
+    fetchDataNarkotika: (db, callback) => {
+        db.query("SELECT * FROM tahanan WHERE perkara = 'Narkotika / Enz.2'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
+    fetchDataOharda: (db, callback) => {
+        db.query("SELECT * FROM tahanan WHERE perkara = 'Orang dan Harta Benda / Eoh.2'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
+    fetchDataKamtibum: (db, callback) => {
+        db.query("SELECT * FROM tahanan WHERE perkara = 'Keamanan dan Ketertiban Umum / Eku.2'", (err, results) => {
+            if (err) {
+                return callback(err, null); // Kirimkan error ke callback jika ada
+            }
+            callback(null, results); // Kirimkan hasil query ke callback jika tidak ada error
+        });
+    },
     getById: (db, id, callback) => {
         db.query("SELECT * FROM tahanan WHERE id = ", id, callback);
     },

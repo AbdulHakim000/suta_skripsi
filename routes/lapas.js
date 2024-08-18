@@ -8,4 +8,5 @@ router.post('/edit',lapasController.addFoto, lapasController.update);
 router.get('/detail/:id',lapasController.detail);
 router.get('/edit/:id',lapasController.edit);
 router.get('/delete/:id',lapasController.delete);
+router.get('/cetak/', lapasController.cetakPDF);
 module.exports = router;

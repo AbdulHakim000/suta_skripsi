@@ -17,6 +17,36 @@ module.exports = {
             callback(null, results);
         });
     },
+    fetchDataTerima: (db, callback) => {
+        const query = `
+            SELECT pengajuan_surat.*, tahanan.nama_tahanan 
+            FROM pengajuan_surat 
+            JOIN tahanan ON pengajuan_surat.registrasi_tahanan = tahanan.registrasi_tahanan
+            WHERE pengajuan_surat.status_pengajuan = 'Diterima'
+        `;
+        
+        db.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        });
+    },
+    fetchDataTolak: (db, callback) => {
+        const query = `
+            SELECT pengajuan_surat.*, tahanan.nama_tahanan 
+            FROM pengajuan_surat 
+            JOIN tahanan ON pengajuan_surat.registrasi_tahanan = tahanan.registrasi_tahanan
+            WHERE pengajuan_surat.status_pengajuan = 'Ditolak'
+        `;
+        
+        db.query(query, (err, results) => {
+            if (err) {
+                return callback(err, null);
+            }
+            callback(null, results);
+        });
+    },
 
     fetchDataTahanan: (db, callback) => {
         db.query("SELECT * FROM tahanan", callback);
