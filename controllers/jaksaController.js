@@ -1,4 +1,6 @@
 const jaksa = require('../models/jaksaModel');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const createPDFReport = require('../utils/pdfHelper');
 const db = require('../database/conn.js'); // Import konfigurasi database
 const PDFDocument = require('pdfkit');
@@ -462,5 +464,44 @@ cetakLaporanJaksa: async (req, res) => {
             res.status(500).send('Error generating PDF');
         }
     });
+},
+
+downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('Jaksa');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NIP', key: 'nip', width: 20 },
+            { header: 'Nama', key: 'nama', width: 30 },
+            { header: 'Pangkat', key: 'pangkat', width: 20 }
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query('SELECT * FROM jaksa');
+        const jaksaData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        jaksaData.forEach(jaksa => {
+            worksheet.addRow({
+                nip: jaksa.nip,
+                nama: jaksa.nama,
+                pangkat: jaksa.pangkat
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=jaksa_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
+    }
 },
 }

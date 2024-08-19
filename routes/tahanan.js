@@ -32,4 +32,6 @@ router.get('/cetak/:id', (req, res) => {
     console.log('Route accessed');
     tahananController.cetakPDFTahanan(req, res);
 });
+
+router.get('/download-excel',tahananController.downloadExcel);
 module.exports = router;

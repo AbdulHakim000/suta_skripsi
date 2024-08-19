@@ -1,5 +1,7 @@
 const pembesuk = require('../models/pembesukModel');
 const PDFDocument = require('pdfkit');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -431,6 +433,61 @@ cetakLaporanPembesuk: async (req, res) => {
             res.status(500).send('Error generating PDF');
         }
     });
+},
+
+    downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('Pembesuk');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NO', key: 'NO', width: 20 },
+            { header: 'Nama Pembesuk', key: 'nama_pembesuk', width: 30},
+            { header: 'NIK', key: 'nik', width: 20, style: { numFmt: '@' } },
+            { header: 'Tempat Lahir', key: 'tmp_lahir', width: 20 },
+            { header: 'Provinsi', key: 'provinsi', width: 20 },
+            { header: 'Kabupaten / Kota', key: 'kabupaten', width: 20 },
+            { header: 'Kecamatan', key: 'kecamatan', width: 20 },
+            { header: 'Kelurahan / Desa', key: 'kelurahan', width: 20 },
+            { header: 'Jenis Kelamin', key: 'jns_kelamin', width: 20 },
+            { header: 'Pekerjaan', key: 'pekerjaan', width: 20 },
+            { header: 'Kewarganegaraan', key: 'kewarganegaraan', width: 20 },
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query("SELECT * FROM pembesuk");
+        const pembesukData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        pembesukData.forEach((pembesuk,i) => {
+            worksheet.addRow({
+                NO: i+1,
+                nama_pembesuk: pembesuk.nama_pembesuk, // Pastikan nik dikonversi ke string
+                nik: pembesuk.nik.toString(),
+                tmp_lahir: pembesuk.tmp_lahir,
+                provinsi: pembesuk.provinsi,
+                kabupaten: pembesuk.kabupaten,
+                kecamatan: pembesuk.kecamatan,
+                kelurahan: pembesuk.kelurahan,
+                jns_kelamin: pembesuk.jns_kelamin,
+                pekerjaan: pembesuk.pekerjaan,
+                kewarganegaraan: pembesuk.kewarganegaraan,
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=pembesuk_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
+    }
 },
 
 }

@@ -1,5 +1,7 @@
 const surat = require('../models/suratModel');
 const PDFDocument = require('pdfkit');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -652,5 +654,54 @@ cetakPDFSurat: async (req, res) => {
             res.status(500).send('Error generating PDF');
         }
     });
+},
+
+downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('Surat');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NO', key: 'NO', width: 20 },
+            { header: 'NIK', key: 'nik', width: 30, style: { numFmt: '@' }},
+            { header: 'Nama Pembesuk', key: 'nama_pembesuk', width: 20 },
+            { header: 'Registrasi Tahanan', key: 'Registrasi_Tahanan', width: 20 },
+            { header: 'Nama Tahanan', key: 'Nama_Tahanan', width: 20 },
+            { header: 'Hubungan', key: 'Hubungan', width: 20 },
+            { header: 'Tanggal Besuk 1', key: 'Tanggal_Besuk_1', width: 20 },
+            { header: 'Tanggal Besuk 2', key: 'Tanggal_Besuk_2', width: 20 },
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query("SELECT surat.*, tahanan.nama_tahanan,  pembesuk.nama_pembesuk FROM surat INNER JOIN tahanan ON surat.registrasi_tahanan = tahanan.registrasi_tahanan INNER JOIN pembesuk ON surat.nik = pembesuk.nik");
+        const suratData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        suratData.forEach((surat,i) => {
+            worksheet.addRow({
+                NO: i+1,
+                nik: surat.nik.toString(), // Pastikan nik dikonversi ke string
+                nama_pembesuk: surat.nama_pembesuk,
+                Registrasi_Tahanan: surat.registrasi_tahanan,
+                Nama_Tahanan: surat.nama_tahanan,
+                Hubungan: surat.hubungan,
+                Tanggal_Besuk_1: surat.tanggal1,
+                Tanggal_Besuk_2: surat.tanggal2,
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=surat_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
+    }
 },
 }

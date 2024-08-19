@@ -14,4 +14,6 @@ router.get('/cetak', (req, res) => {
     console.log('Route accessed');
     pengelolaanController.cetakPDF(req, res);
 });
+
+router.get('/download-excel',pengelolaanController.downloadExcel);
 module.exports = router;

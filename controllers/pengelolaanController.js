@@ -1,5 +1,7 @@
 const pengelolaan = require('../models/pengelolaanModel');
 const PDFDocument = require('pdfkit');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -514,5 +516,73 @@ addFoto : (req, res, next) => {
             res.status(500).send('Error generating PDF');
         }
     });
+},
+
+    downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('Pengelolaan');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NO', key: 'NO', width: 20 },
+            { header: 'Registrasi Perkara', key: 'registrasi_perkara', width: 30},
+            { header: 'Registrasi Tahanan', key: 'registrasi_tahanan', width: 20 },
+            { header: 'Nama Tahanan', key: 'nama_tahanan', width: 20 },
+            { header: 'Perkara', key: 'perkara', width: 20 },
+            { header: 'Tanggal Lahir', key: 'tgl_lahir', width: 20 },
+            { header: 'Pekerjaan', key: 'pekerjaan', width: 20 },
+            { header: 'Kronologi', key: 'kronologi', width: 100 },
+            { header: 'Jaksa 1', key: 'jaksa1', width: 20 },
+            { header: 'Jaksa 2', key: 'jaksa2', width: 20 },
+            { header: 'Jaksa 3', key: 'jaksa3', width: 20 },
+            { header: 'Jaksa 4', key: 'jaksa4', width: 20 },
+            { header: 'Barang Bukti', key: 'barang_bukti', width: 100 },
+            { header: 'Melanggar Pasal', key: 'melanggar_pasal', width: 100 },
+            { header: 'Lapas', key: 'lapas', width: 20 },
+            { header: 'Durasi Penahanan', key: 'durasi_penahanan', width: 20 },
+            { header: 'Tanggal Penuntutan', key: 'tgl_penuntutan', width: 20 },
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query("SELECT pengelolaan.*, tahanan.nama_tahanan, tahanan.perkara, tahanan.tgl_lahir, tahanan.pekerjaan FROM pengelolaan INNER JOIN tahanan ON pengelolaan.registrasi_tahanan = tahanan.registrasi_tahanan");
+        const pengelolaanData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        pengelolaanData.forEach((pengelolaan,i) => {
+            worksheet.addRow({
+                NO: i+1,
+                registrasi_perkara: pengelolaan.registrasi_perkara,
+                registrasi_tahanan: pengelolaan.registrasi_tahanan,
+                nama_tahanan: pengelolaan.nama_tahanan,
+                perkara: pengelolaan.perkara,
+                tgl_lahir: pengelolaan.tgl_lahir,
+                pekerjaan: pengelolaan.pekerjaan,
+                kronologi: pengelolaan.kronologi,
+                jaksa1: pengelolaan.jaksa1,
+                jaksa2: pengelolaan.jaksa2,
+                jaksa3: pengelolaan.jaksa3,
+                jaksa4: pengelolaan.jaksa4,
+                barang_bukti: pengelolaan.barang_bukti,
+                melanggar_pasal: pengelolaan.melanggar_pasal,
+                lapas: pengelolaan.lapas,
+                durasi_penahanan: pengelolaan.durasi_penahanan,
+                tgl_penuntutan: pengelolaan.tgl_penuntutan,
+                
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=pengelolaan_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
+    }
 },
 }

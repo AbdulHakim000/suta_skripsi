@@ -134,16 +134,16 @@ app.get('/logout', (req, res) => {
 
 
 
-app.use('/jaksa',isAuthenticated, jaksaRouter);
-app.use('/pembesuk',isAuthenticated, pembesukRouter);
-app.use('/surat',isAuthenticated, suratRouter);
+app.use('/jaksa', jaksaRouter);
+app.use('/pembesuk', pembesukRouter);
+app.use('/surat', suratRouter);
 app.use('/provinsi',isAuthenticated, provinsiRouter);
 app.use('/kabupaten',isAuthenticated, kabupatenRouter);
 app.use('/tahanan', tahananRouter);
-app.use('/pengajuan',isAuthenticated, pengajuanRouter);
-app.use('/pengelolaan',isAuthenticated, pengelolaanRouter);
+app.use('/pengajuan', pengajuanRouter);
+app.use('/pengelolaan', pengelolaanRouter);
 app.use('/user', userRouter);
-app.use('/lapas',isAuthenticated, lapasRouter);
+app.use('/lapas', lapasRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/graphic',isAuthenticated, graphicRouter);

@@ -12,4 +12,6 @@ router.get('/cetak', (req, res) => {
     console.log('Route accessed');
     jaksaController.cetakLaporanJaksa(req, res);
 });
+
+router.get('/download-excel', jaksaController.downloadExcel);
 module.exports = router;

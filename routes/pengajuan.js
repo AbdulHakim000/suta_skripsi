@@ -63,4 +63,6 @@ router.get('/cetak/:id', (req, res) => {
         });
     });
 
+    router.get('/download-excel', pengajuanController.downloadExcel);
+
 module.exports = router;

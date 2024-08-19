@@ -31,8 +31,7 @@ router.get('/cetak',userController.cetakPDF);
 router.get('/cetak/admin',userController.cetakPDFAdmin);
 router.get('/cetak/staff',userController.cetakPDFStaff);
 router.get('/cetak/public',userController.cetakPDFPublic);
-router.get('/cetak/:id', (req, res) => {
-    console.log('Route accessed');
-    userController.cetakPDFSurat(req, res);
-});
+
+router.get('/download-excel',userController.downloadExcel);
+
 module.exports = router;

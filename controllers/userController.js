@@ -1,5 +1,7 @@
 const user = require('../models/userModel');
 const path = require('path');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const multer = require('multer');
 const bcrypt = require('bcrypt'); // Import bcrypt
 const PDFDocument = require('pdfkit');
@@ -1397,5 +1399,49 @@ cetakPDFSurat: async (req, res) => {
             res.status(500).send('Error generating PDF');
         }
     });
+},
+
+
+        downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('User');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NO', key: 'NO', width: 20 },
+            { header: 'Username', key: 'username', width: 30},
+            { header: 'Email', key: 'email', width: 30},
+            { header: 'Role', key: 'role', width: 20 },
+ 
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query("SELECT * FROM user");
+        const userData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        userData.forEach((user,i) => {
+            worksheet.addRow({
+                NO: i+1,
+                username: user.username, 
+                email: user.email, 
+                role: user.role, 
+
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=user_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
+    }
 },
 }

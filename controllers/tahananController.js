@@ -1,6 +1,8 @@
 const tahanan = require('../models/tahananModel');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const excel = require('exceljs');
+const pool = require('../database/pool.js');
 const path = require('path');
 const multer = require('multer');
 
@@ -1343,5 +1345,70 @@ cetakLaporanTahananKamtibum: async (req, res) => {
                 res.status(500).send('Error generating PDF');
             }
         });
+    },
+
+    downloadExcel : async (req, res) => {
+    try {
+        // Buat workbook dan sheet
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('tahanan');
+
+        // Menambahkan header
+        worksheet.columns = [
+            { header: 'NO', key: 'NO', width: 20 },
+            { header: 'Nama Tahanan', key: 'nama_tahanan', width: 20 },
+            { header: 'Registrasi Tahanan', key: 'registrasi_tahanan', width: 30, style: { numFmt: '@' }},
+            { header: 'Tanggal Lahir', key: 'tgl_lahir', width: 20 },
+            { header: 'Tempat Lahir', key: 'tmp_lahir', width: 20 },
+            { header: 'Provinsi', key: 'provinsi', width: 20 },
+            { header: 'Kabupaten / Kota', key: 'kabupaten', width: 20 },
+            { header: 'Kecamatan', key: 'kecamatan', width: 20 },
+            { header: 'Kelurahan / Desa', key: 'kelurahan', width: 20 },
+            { header: 'Agama', key: 'agama', width: 20 },
+            { header: 'Jenis Kelamin', key: 'jns_kelamin', width: 20 },
+            { header: 'Pekerjaan', key: 'pekerjaan', width: 20 },
+            { header: 'Pendidikan', key: 'pendidikan', width: 20 },
+            { header: 'Perkara', key: 'perkara', width: 20 },
+            { header: 'kewarganegaraan', key: 'kewarganegaraan', width: 20 },
+            { header: 'Tanggal Surat Tuntutan', key: 'tgl_surat_tuntutan', width: 20 },
+        ];
+
+        // Ambil data dari database
+        const result = await pool.query("SELECT * FROM tahanan");
+        const tahananData = result[0]; // Mengambil data dari hasil query
+
+        // Menambahkan baris ke worksheet
+        tahananData.forEach((tahanan,i) => {
+            worksheet.addRow({
+                NO: i+1,
+                nama_tahanan: tahanan.nama_tahanan,
+                registrasi_tahanan: tahanan.registrasi_tahanan,
+                tgl_lahir: tahanan.tgl_lahir,
+                tmp_lahir: tahanan.tmp_lahir,
+                provinsi: tahanan.provinsi,
+                kabupaten: tahanan.kabupaten,
+                kecamatan: tahanan.kecamatan,
+                kelurahan: tahanan.kelurahan,
+                agama: tahanan.agama,
+                jns_kelamin: tahanan.jns_kelamin,
+                pekerjaan: tahanan.pekerjaan,
+                pendidikan: tahanan.pendidikan,
+                perkara: tahanan.perkara,
+                kewarganegaraan: tahanan.kewarganegaraan,
+                tgl_surat_tuntutan: tahanan.tgl_surat_tuntutan,
+            });
+        });
+
+        // Set header untuk unduhan
+        res.setHeader('Content-Disposition', 'attachment; filename=tahanan_report.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Kirim file Excel sebagai respons
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (error) {
+        console.error('Error generating Excel report:', error);
+        res.status(500).send('Error generating Excel report');
     }
+},
 }
