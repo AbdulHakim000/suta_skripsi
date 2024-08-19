@@ -137,4 +137,21 @@ updateStatus: (db, pengajuanId, status, callback) => {
             callback(null, results);
         });
     },
+
+
+    getPengajuanById: (db, pengajuanId, callback) => {
+            const query = `
+                SELECT pengajuan_surat.*, tahanan.nama_tahanan 
+                FROM pengajuan_surat 
+                JOIN tahanan ON pengajuan_surat.registrasi_tahanan = tahanan.registrasi_tahanan
+                WHERE pengajuan_surat.id = ?
+            `;
+            
+            db.query(query, [pengajuanId], (err, results) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                callback(null, results[0]); // Return the first result (assuming IDs are unique)
+            });
+        },
 }

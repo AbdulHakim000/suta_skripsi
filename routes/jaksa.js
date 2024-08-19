@@ -15,4 +15,6 @@ router.get('/cetak', (req, res) => {
 
 router.get('/download-excel', jaksaController.downloadExcel);
 router.get('/download-csv', jaksaController.downloadCSV);
+
+router.get('/api-data', jaksaController.apiData);
 module.exports = router;

@@ -6,8 +6,8 @@ const path = require('path');
 const logger = require('morgan');
 const Swal = require('sweetalert2');
 const { isAuthenticated } = require('./middlewares/authMiddleware');
-
-
+const mysql = require('mysql2');
+const promisePool = require('./database/pool'); // Pastikan path ini sesuai
 const db = require('./database/conn');
 // const flash = require('express-flash');
 const flash = require('connect-flash');
@@ -90,7 +90,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // autentikasi user
 // Rute yang memerlukan autentikasi
-app.get('/', isAuthenticated, (req, res) => {
+app.get('/', isAuthenticated, async (req, res) => {
     console.log('User session:', req.session.user);  // Debugging
 
     const userRole = req.session.user.role; // Assuming role is stored in req.user
@@ -104,12 +104,27 @@ app.get('/', isAuthenticated, (req, res) => {
         layout = 'layout/public/main';
     }
 
-    console.log('Layout:', layout);  // Debuggin
-    res.render('index', { 
-      user: req.session.user ,
-      layout: layout,
-      title: 'Halaman user',
-    });
+    console.log('Layout:', layout);  // Debugging
+    try {
+        // Query to get counts
+        const [tahananRows] = await promisePool.query('SELECT COUNT(*) AS count FROM tahanan');
+        const [pembesukRows] = await promisePool.query('SELECT COUNT(*) AS count FROM pembesuk');
+        const [suratRows] = await promisePool.query('SELECT COUNT(*) AS count FROM surat');
+        const [pengajuanRows] = await promisePool.query('SELECT COUNT(*) AS count FROM pengajuan_surat WHERE status_pengajuan = "Belum Diproses"');
+
+        res.render('index', { 
+            user: req.session.user,
+            layout: layout,
+            title: 'Halaman user',
+            jumlahTahanan: tahananRows[0].count,
+            jumlahPembesuk: pembesukRows[0].count,
+            jumlahSurat: suratRows[0].count,
+            jumlahPengajuan: pengajuanRows[0].count
+        });
+    } catch (error) {
+        console.error('Database query error:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 // app.get('/jaksa', isAuthenticated, (req, res) => {
 //     console.log('User session:', req.session.user);  // Debugging
@@ -134,15 +149,15 @@ app.get('/logout', (req, res) => {
 
 
 
-app.use('/jaksa', jaksaRouter);
-app.use('/pembesuk', pembesukRouter);
-app.use('/surat', suratRouter);
+app.use('/jaksa',isAuthenticated, jaksaRouter);
+app.use('/pembesuk',isAuthenticated, pembesukRouter);
+app.use('/surat',isAuthenticated, suratRouter);
 app.use('/provinsi',isAuthenticated, provinsiRouter);
 app.use('/kabupaten',isAuthenticated, kabupatenRouter);
-app.use('/tahanan', tahananRouter);
-app.use('/pengajuan', pengajuanRouter);
-app.use('/pengelolaan', pengelolaanRouter);
-app.use('/user', userRouter);
+app.use('/tahanan',isAuthenticated, tahananRouter);
+app.use('/pengajuan',isAuthenticated, pengajuanRouter);
+app.use('/pengelolaan',isAuthenticated, pengelolaanRouter);
+app.use('/user',isAuthenticated, userRouter);
 app.use('/lapas', lapasRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);

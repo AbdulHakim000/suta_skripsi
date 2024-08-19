@@ -48,6 +48,7 @@ const uploadUser = multer({
 
 
 module.exports = {
+
         loginPage: (req, res) => {
             res.render('login/index', { 
                 session: req.session ,

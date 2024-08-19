@@ -35,4 +35,15 @@ router.get('/cetak/:id', (req, res) => {
 
 router.get('/download-excel',tahananController.downloadExcel);
 router.get('/download-CSV',tahananController.downloadCSV);
+router.get('/api-data',tahananController.apiData);
+
+router.get('/jumlah-tahanan', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT COUNT(*) AS jumlah FROM tahanan');
+        res.json({ jumlah: rows[0].jumlah });
+    } catch (error) {
+        console.error('Error querying database:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 module.exports = router;

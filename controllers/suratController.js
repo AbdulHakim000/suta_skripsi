@@ -1,4 +1,5 @@
 const surat = require('../models/suratModel');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
@@ -21,6 +22,17 @@ const connection = mysql.createConnection({
 const query = promisify(connection.query).bind(connection);
 
 module.exports = {
+     apiData : (req, res) => {
+        const query = `SELECT surat.*, tahanan.nama_tahanan, tahanan.tmp_lahir, tahanan.tgl_lahir, tahanan.jns_kelamin, tahanan.pekerjaan, pembesuk.nama_pembesuk, pembesuk.provinsi, pembesuk.kabupaten, pembesuk.kecamatan, pembesuk.kelurahan FROM surat INNER JOIN tahanan ON surat.registrasi_tahanan = tahanan.registrasi_tahanan INNER JOIN pembesuk ON surat.nik = pembesuk.nik`
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
 
     index: (req, res) => {
         // Ambil data surat

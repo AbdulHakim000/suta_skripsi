@@ -1,11 +1,20 @@
 const pengajuan = require('../models/pengajuanModel');
 const PDFDocument = require('pdfkit');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
 const { Parser } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+
+const twilio = require('twilio');
+require('dotenv').config(); // Pastikan dotenv diinisialisasi jika menggunakan .env file
+// Konfigurasi Twilio
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = twilio(accountSid, authToken);
+
 
 const mysql = require('mysql');
 const { promisify } = require('util');
@@ -48,7 +57,17 @@ const uploadPengajuan = multer({
 });
 
 module.exports = {
+    apiData : (req, res) => {
+        const query = 'SELECT * FROM pengajuan_surat'
 
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
 
     indexAdmin: (req, res) => {
         // Ambil data surat
@@ -328,43 +347,13 @@ module.exports = {
         });
     },
 
-
-//     edit: (req, res) => {
-//      pengajuan.fetchData(req.db, (err, rows) => {
-//         if (err) {
-//             req.flash('error', err.message); 
-//             res.render('admin/pengajuan/edit_modal', { data:''})
-//         } else {
-//             const id = parseInt(req.params.id);
-//             const pengajuan = rows.find(pengajuan => pengajuan.id === id);
-//             const userRole = req.session.user.role; // Assuming role is stored in req.user
-            
-//             let layout;
-//             if (userRole === 'admin') {
-//                 layout = 'layout/admin/main';
-//             } else if (userRole === 'staff') {
-//                 layout = 'layout/staff/main';
-//             } else {
-//                 layout = 'layout/public/main';
-//             }           
-//             res.render('admin/pengajuan/edit_modal', { 
-//                 layout: layout,
-//                 title: layout,
-//                 user: req.session.user,
-//                 userRole: req.session.user.role,
-//                 pengajuan, 
-//                 pengajuans: rows})
-//         }
-//     });
-// },
-
     add : async (req, res) => {
         try {
             console.log('File received:', req.file); // Periksa apakah file diterima
             console.log('Request body:', req.body);
 
             const {
-                nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, status_pengajuan} = req.body;
+                nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, status_pengajuan, nomor_hp} = req.body;
 
             const form_pengajuan = {
                 nama_pembesuk, 
@@ -377,6 +366,7 @@ module.exports = {
                 pengajuan_by:  req.session.user.email,
                 tgl_pengajuan: new Date(),
                 status_pengajuan,
+                nomor_hp,
                 gambar_ktp: req.file ? req.file.filename : null // Periksa apakah req.file berisi file
             };
 
@@ -429,7 +419,7 @@ module.exports = {
     },
 
     update: async (req, res) => {
-        const {id, nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, pengajuan_by, tgl_pengajuan, status_pengajuan, old_gambar_ktp} = req.body;
+        const {id, nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, pengajuan_by, tgl_pengajuan, status_pengajuan,nomor_hp, old_gambar_ktp} = req.body;
         // Check if a new image is uploaded
 
         console.log('Uploaded file:', req.file); // Debugging line
@@ -447,6 +437,7 @@ module.exports = {
             pengajuan_by, 
             tgl_pengajuan,
             status_pengajuan,
+            nomor_hp,
             gambar_ktp: new_gambar_ktp
         };
 
@@ -471,7 +462,7 @@ module.exports = {
         }
     },
     updateAdmin: async (req, res) => {
-        const {id, nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, pengajuan_by, tgl_pengajuan, status_pengajuan, old_gambar_ktp} = req.body;
+        const {id, nama_pembesuk, alamat_pembesuk, pekerjaan_pembesuk, hubungan, registrasi_tahanan, nama_tahananx, tanggal_besuk, pengajuan_by, tgl_pengajuan, status_pengajuan,nomor_hp, old_gambar_ktp} = req.body;
         // Check if a new image is uploaded
 
         console.log('Uploaded file:', req.file); // Debugging line
@@ -489,6 +480,7 @@ module.exports = {
             pengajuan_by, 
             tgl_pengajuan,
             status_pengajuan,
+            nomor_hp,
             gambar_ktp: new_gambar_ktp
         };
 
@@ -529,24 +521,101 @@ module.exports = {
     })
     },
 
+    // approvePengajuan: (db, pengajuanId, callback) => {
+    //         // Call the updateStatus function from the model and pass 'approved' as the status
+    //         pengajuan.updateStatus(db, pengajuanId, 'Diterima', (err, result) => {
+    //             if (err) {
+    //                 return callback(err, null);
+    //             }
+    //             callback(null, result);
+    //         });
+    //     },
+
     approvePengajuan: (db, pengajuanId, callback) => {
-            // Call the updateStatus function from the model and pass 'approved' as the status
-            pengajuan.updateStatus(db, pengajuanId, 'Diterima', (err, result) => {
+        // Perbarui status pengajuan menjadi 'Diterima'
+        pengajuan.updateStatus(db, pengajuanId, 'Diterima', (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+
+            // Setelah status diperbarui, ambil data pengajuan untuk mendapatkan nomor handphone
+            pengajuan.getPengajuanById(db, pengajuanId, (err, pengajuanData) => {
                 if (err) {
                     return callback(err, null);
                 }
+
+                const nomorHP = pengajuanData.nomor_hp; // Asumsikan kolom nomor_wa ada di tabel pengajuan_surat
+                if (nomorHP.startsWith('0')) {
+                    nomorWA = '+62' + nomorHP.slice(1);
+                } else {
+                    nomorWA = nomorHP; // Jika nomor sudah dalam format internasional, tidak perlu diubah
+                }
+                const namaTahanan = pengajuanData.nama_tahanan;
+                const pesan = `Pengajuan surat izin besuk untuk tahanan ${namaTahanan} telah diterima, silahkan download surat diwebsite kami, terimakasih.`;
+
+                // Kirim pesan WhatsApp melalui Twilio
+                client.messages.create({
+                    body: pesan,
+                    from: 'whatsapp:+14155238886',
+                    to: `whatsapp:${nomorWA}`
+                }).then(message => {
+                    console.log('Pesan WhatsApp berhasil dikirim:', message.sid);
+                }).catch(err => {
+                    console.error('Gagal mengirim pesan WhatsApp:', err);
+                });
+
                 callback(null, result);
             });
-        },
+        });
+    },
+
+    // rejectPengajuan: (db, pengajuanId, callback) => {
+    //         // Call the updateStatus function from the model and pass 'approved' as the status
+    //         pengajuan.updateStatus(db, pengajuanId, 'Ditolak', (err, result) => {
+    //             if (err) {
+    //                 return callback(err, null);
+    //             }
+    //             callback(null, result);
+    //         });
+    //     },
+
     rejectPengajuan: (db, pengajuanId, callback) => {
-            // Call the updateStatus function from the model and pass 'approved' as the status
-            pengajuan.updateStatus(db, pengajuanId, 'Ditolak', (err, result) => {
+        // Perbarui status pengajuan menjadi 'Diterima'
+        pengajuan.updateStatus(db, pengajuanId, 'Ditolak', (err, result) => {
+            if (err) {
+                return callback(err, null);
+            }
+
+            // Setelah status diperbarui, ambil data pengajuan untuk mendapatkan nomor handphone
+            pengajuan.getPengajuanById(db, pengajuanId, (err, pengajuanData) => {
                 if (err) {
                     return callback(err, null);
                 }
+
+                const nomorHP = pengajuanData.nomor_hp; // Asumsikan kolom nomor_wa ada di tabel pengajuan_surat
+                if (nomorHP.startsWith('0')) {
+                    nomorWA = '+62' + nomorHP.slice(1);
+                } else {
+                    nomorWA = nomorHP; // Jika nomor sudah dalam format internasional, tidak perlu diubah
+                }
+                const namaTahanan = pengajuanData.nama_tahanan;
+                const pesan = `Pengajuan surat izin besuk untuk tahanan ${namaTahanan} belum bisa kami proses, karena data yang anda masukkan tidak valid atau kurang lengkap.`;
+
+                // Kirim pesan WhatsApp melalui Twilio
+                client.messages.create({
+                    body: pesan,
+                    from: 'whatsapp:+14155238886',
+                    to: `whatsapp:${nomorWA}`
+                }).then(message => {
+                    console.log('Pesan WhatsApp berhasil dikirim:', message.sid);
+                }).catch(err => {
+                    console.error('Gagal mengirim pesan WhatsApp:', err);
+                });
+
                 callback(null, result);
             });
-        },
+        });
+    },
 
     cetakLaporanPengajuan: async (req, res) => {
 

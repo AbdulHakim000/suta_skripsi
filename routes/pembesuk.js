@@ -15,4 +15,6 @@ router.get('/cetak', (req, res) => {
 
 router.get('/download-excel',pembesukController.downloadExcel);
 router.get('/download-CSV',pembesukController.downloadCSV);
+router.get('/api-data',pembesukController.apiData);
+
 module.exports = router;

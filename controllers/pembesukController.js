@@ -4,6 +4,7 @@ const excel = require('exceljs');
 const pool = require('../database/pool.js');
 const { Parser } = require('json2csv');
 const fs = require('fs');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const path = require('path');
 const multer = require('multer');
 
@@ -20,6 +21,17 @@ const connection = mysql.createConnection({
 
 const query = promisify(connection.query).bind(connection);
 module.exports = {
+    apiData : (req, res) => {
+        const query = 'SELECT * FROM pembesuk'
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
     index: (req, res) => {
 
     const userRole = req.session.user.role; // Assuming role is stored in req.user

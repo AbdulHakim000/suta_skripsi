@@ -9,4 +9,6 @@ router.get('/detail/:id',lapasController.detail);
 router.get('/edit/:id',lapasController.edit);
 router.get('/delete/:id',lapasController.delete);
 router.get('/cetak/', lapasController.cetakPDF);
+router.get('/api-data', lapasController.apiData);
+
 module.exports = router;

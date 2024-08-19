@@ -51,6 +51,18 @@ const uploadJaksa = multer({
 
 module.exports = {
 
+    apiData : (req, res) => {
+        const query = 'SELECT * FROM jaksa'
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
+
     index: (req, res) => {
         jaksa.fetchData(req.db, (err, rows) => {
             const userRole = req.session.user.role; // Assuming role is stored in req.user

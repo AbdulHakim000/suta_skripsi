@@ -1,4 +1,5 @@
 const lapas = require('../models/lapasModel');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const multer = require('multer');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
@@ -44,6 +45,18 @@ const uploadLapas = multer({
 
 
 module.exports = {
+    
+    apiData : (req, res) => {
+        const query = 'SELECT * FROM lapas'
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
     index: (req, res) => {
 
         const userRole = req.session.user.role; // Assuming role is stored in req.user

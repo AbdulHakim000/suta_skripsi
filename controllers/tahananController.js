@@ -1,4 +1,5 @@
 const tahanan = require('../models/tahananModel');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const excel = require('exceljs');
@@ -49,6 +50,18 @@ const uploadTahanan = multer({
 
 
 module.exports = {
+    apiData : (req, res) => {
+        const query = 'SELECT * FROM tahanan'
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
+
     index: (req, res) => {
 
         const userRole = req.session.user.role; // Assuming role is stored in req.user

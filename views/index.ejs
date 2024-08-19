@@ -8,10 +8,58 @@
         </head>
         <body>
 
-
         <h1 style="text-align: center; margin-top: 20px;">Welcome, <%= user.username %>!</h1>
-        
+       
+<!-- ======================= Cards ================== -->
+        <div class="cardBox">
+            <a href="/tahanan" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= jumlahTahanan %></div>
+                        <div class="cardName">Jumlah Tahanan</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="body-outline"></ion-icon>
+                    </div>
+                </div>
+            </a>
 
+            <a href="/pembesuk" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= jumlahPembesuk %></div>
+                        <div class="cardName">Jumlah Pembesuk</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="people-outline"></ion-icon>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/surat" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= jumlahSurat %></div>
+                        <div class="cardName">Jumlah Surat</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="mail-outline"></ion-icon>
+                    </div>
+                </div>
+            </a>
+
+            <a href="/pengajuan/admin/belum-diproses" style="text-decoration: none;">
+                <div class="card">
+                    <div>
+                        <div class="numbers"><%= jumlahPengajuan %></div>
+                        <div class="cardName">Pengajuan Yang Perlu Diproses</div>
+                    </div>
+                    <div class="iconBx">
+                        <ion-icon name="cash-outline"></ion-icon>
+                    </div>
+                </div>
+            </a>
+        </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

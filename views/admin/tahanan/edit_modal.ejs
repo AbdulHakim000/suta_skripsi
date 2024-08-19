@@ -120,6 +120,15 @@
                         </select> 
                     </div>
                     <div class="form-group">
+                        <label for="status">Status</label>
+                        <select name="status" id="status" class="form-control" required>
+                          <option value="<%= tahanan.status  %>"><%= tahanan.status  %></option>
+                          <option value="Tahanan Sementara">Tahanan Sementara</option>
+                          <option value="Tahanan Tetap">Tahanan Tetap</option>
+                          <option value="Bebas">Bebas</option>
+                        </select> 
+                    </div>
+                    <div class="form-group">
                         <label for="kewarganegaraan">kewarganegaraan</label>
                         <input type="text" name="kewarganegaraan" class="form-control" id="kewarganegaraan" required value="<%= tahanan.kewarganegaraan  %>">
                     </div>

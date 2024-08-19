@@ -265,6 +265,10 @@ margin-left: 15px;
   grid-gap: 30px;
 }
 
+.cardBox a {
+  text-decoration: none;
+}
+
 .cardBox .card {
   position: relative;
   background: var(--white);
@@ -274,6 +278,7 @@ margin-left: 15px;
   justify-content: space-between;
   cursor: pointer;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s, color 0.3s; /* Tambahkan transisi agar perubahan warna lebih halus */
 }
 
 .cardBox .card .numbers {
@@ -297,6 +302,7 @@ margin-left: 15px;
 .cardBox .card:hover {
   background: var(--blue);
 }
+
 .cardBox .card:hover .numbers,
 .cardBox .card:hover .cardName,
 .cardBox .card:hover .iconBx {

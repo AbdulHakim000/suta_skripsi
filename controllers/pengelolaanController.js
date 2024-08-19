@@ -1,4 +1,5 @@
 const pengelolaan = require('../models/pengelolaanModel');
+const db = require('../database/conn.js'); // Import konfigurasi database
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
@@ -47,6 +48,18 @@ const uploadBarbuk = multer({
 });
 
 module.exports = {
+
+    apiData : (req, res) => {
+        const query = 'SELECT pengelolaan.*, tahanan.nama_tahanan, tahanan.perkara, tahanan.tgl_lahir, tahanan.pekerjaan FROM pengelolaan INNER JOIN tahanan ON pengelolaan.registrasi_tahanan = tahanan.registrasi_tahanan'
+
+        db.query(query, (err, result) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            } else {
+                res.json(result);
+            }
+        });
+    },
     index: (req, res) => {
         // ambil data pengelolaan
         pengelolaan.fetchData(req.db, (errPengelolaan, rowsPengelolaan) => {
