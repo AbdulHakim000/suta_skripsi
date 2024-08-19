@@ -19,7 +19,9 @@ module.exports = {
                 res.render('kabupaten/index', {
                     layout: layout,
                     title: 'Halaman kabupaten',
-                    kabupatens: rows
+                    kabupatens: rows,
+                    user: req.session.user,
+                    userRole: req.session.user.role,
                 });
             }
         });
@@ -47,6 +49,8 @@ module.exports = {
                 layout: layout,
                 title: 'Halaman kabupaten',
                 kabupaten, 
+                user: req.session.user,
+                userRole: req.session.user.role,
                 kabupatens: rows})
         }
     });
@@ -81,45 +85,48 @@ module.exports = {
     
 }  ,
 
-add: (req, res) => {
-    const {id_kabupaten, nama_kabupaten, id_provinsi} = req.body;
-    const form_kabupaten = {id_kabupaten, nama_kabupaten, id_provinsi};
+add: async (req, res) => {
+    const { id_kabupaten, nama_kabupaten, id_provinsi } = req.body;
+    const form_kabupaten = { id_kabupaten, nama_kabupaten, id_provinsi };
+
+    try {
+        console.log(form_kabupaten);
+
+        // Assuming kabupaten.insertData returns a Promise
+        await kabupaten.insertData(req.db, form_kabupaten);
+
+        req.flash('success', 'Data berhasil dimasukkan ke database');
+        return res.redirect('/kabupaten');
+    } catch (err) {
+        req.flash('error', `Error Ketika Memasukkan Data: ${err.message}`);
+        return res.redirect('/kabupaten');
+    }
+},
     
+    
+    
+update: async (req, res) => {
+    const { id, id_kabupaten, nama_kabupaten, id_provinsi } = req.body;
+    const form_kabupaten = {
+        id,
+        id_kabupaten,
+        nama_kabupaten,
+        id_provinsi,
+    };
+
     console.log(form_kabupaten);
 
-    kabupaten.insertData(req.db, form_kabupaten, (err, result) => {
-        if (err) {
-            req.flash('error', `Error Ketika Memasukkan Data: ${err.message}`);
-            return res.redirect('/kabupaten');
-        } else {
-            req.flash('success', 'Data berhasil dimasukkan ke database');
-            return res.redirect('/kabupaten');
-        }
-    });
-    },
-    
-    
-    
-update: (req, res) => {
-    const {id, id_kabupaten, nama_kabupaten, id_provinsi} = req.body;
-    const form_kabupaten = {
-            id,
-            id_kabupaten,
-            nama_kabupaten,
-            id_provinsi,
-        }
-    
-    console.log(form_kabupaten);
-    kabupaten.updateData(req.db, id, form_kabupaten, (err, result) => {
-            if (err) {
-                req.flash('error','Error Ketika Memasukkan Data', err.message);
-                res.redirect('/kabupaten');
-            } else {
-                req.flash('succes','Data Berhasil diUpdate');
-                res.redirect('/kabupaten');
-            }
-        })
-    },
+    try {
+        // Assuming kabupaten.updateData returns a Promise
+        await kabupaten.updateData(req.db, id, form_kabupaten);
+
+        req.flash('success', 'Data Berhasil di Update');
+        res.redirect('/kabupaten');
+    } catch (err) {
+        req.flash('error', `Error Ketika Memasukkan Data: ${err.message}`);
+        res.redirect('/kabupaten');
+    }
+},
 
 
     delete : (req, res) => {

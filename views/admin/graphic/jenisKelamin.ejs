@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafik Jenis Kelamin Tahanan</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script> <!-- Plugin untuk label data -->
+            <style>
+        /* Mengatur ukuran kanvas */
+        #genderChart {
+            max-width: 1000px; /* Lebar maksimum kanvas */
+            max-height: 700px; /* Tinggi maksimum kanvas */
+        }
+    </style>
+</head>
+<body>
+     <div style="padding: 50px; display: flex; flex-direction: column; align-items: center;">
+        <h2>Grafik Tahanan Berdasarkan Perkara</h2>
+        <canvas id="genderChart" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+        fetch('/graphic/data-jenis-kelamin')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(item => item.label);
+                const values = data.map(item => item.value);
+
+                const ctx = document.getElementById('genderChart').getContext('2d');
+                const genderChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Persentase Jenis Kelamin Tahanan',
+                            data: values,
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.5)',  // Warna untuk laki-laki
+                                'rgba(255, 99, 132, 0.5)', // Warna untuk perempuan
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>

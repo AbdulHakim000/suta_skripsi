@@ -5,21 +5,119 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title  %></title>
+    <title><%= title %></title>
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="/assets/css/style.css">
-     <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-     <!-- ini bootstap icon -->
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- ini bootstap icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
 
-    
+.containerx {
+    display: flex;
+}
+
+.navigation {
+    width: 250px; /* Lebar navbar */
+    height: 100vh; /* Tinggi penuh viewport */
+    overflow-y: auto; /* Scroll jika konten melebihi tinggi */
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+}
+/* CSS untuk dropdown */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    z-index: 1000;
+    min-width: 250px; /* Lebar dropdown yang lebih besar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    visibility: hidden; /* Hide by default */
+    left: 10px; /* Geser dropdown 10px ke kanan */
+}
+.dropdown-menu a {
+    display: block;
+    padding: 8px 12px; /* Padding yang lebih kecil */
+    font-size: 0.8rem; /* Ukuran font yang lebih kecil */
+    line-height: 1.4; /* Jarak antar baris yang lebih kecil */
+    color: #333;
+    text-decoration: none;
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+    border: none; /* Hapus border */
+    outline: none; /* Hapus outline */
+    box-shadow: none; /* Hapus box-shadow */
+     outline-offset: 0; /* Set offset outline ke 0 */
+}
+.dropdown-toggle::before {
+    display: none; /* Hapus ikon segitiga */
+}
+.dropdown-toggle::after {
+    display: none; /* Hapus ikon segitiga */
+}
+.dropdown-menu a:hover {
+    background-color: #f8f9fa;
+    border: none; /* Hapus border saat hover */
+    outline: none; /* Hapus outline saat hover */
+    box-shadow: none; /* Hapus box-shadow saat hover */
+}
+.dropdown-menu a::before,
+.dropdown-menu a::after {
+    border: none; /* Hapus border pada pseudo-elements */
+    outline: none; /* Hapus outline pada pseudo-elements */
+}
+.dropdown-menu a:hover {
+    background-color: #f8f9fa;
+    border: none; /* Hapus border saat hover */
+    outline: none; /* Hapus outline saat hover */
+}
+
+.dropdown-menu.show {
+    display: block;
+    opacity: 1;
+    visibility: visible; /* Make visible when active */
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 12px; /* Padding yang lebih kecil */
+    font-size: 0.8rem; /* Ukuran font yang lebih kecil */
+    line-height: 1.4; /* Jarak antar baris yang lebih kecil */
+    color: #333;
+    text-decoration: none;
+    white-space: nowrap; /* Prevent wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow text */
+}
+
+.dropdown-menu a:hover {
+    background-color: #f8f9fa;
+}
+/* Tambahan styling untuk dropdown toggle */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.navigation ul li:last-child {
+    margin-bottom: 50px; /* Sesuaikan sesuai kebutuhan */
+}
+    </style>
 </head>
 
 <body>
     <!-- =============== Navigation ================ -->
     <div class="containerx">
-        <div class="navigation" >
+        <div class="navigation">
             <ul>
                 <li>
                     <a href="/">
@@ -110,21 +208,48 @@
                         <span class="title">User</span>
                     </a>
                 </li>
+
+                <li class="dropdown">
+                    <a href="#" id="alamatDropdown" class="dropdown-toggle">
+                        <span class="icon">
+                            <ion-icon name="map-outline"></ion-icon>
+                        </span>
+                        <span class="title">Alamat</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="/provinsi">Provinsi</a>
+                        <a href="/kabupaten">Kabupaten</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" id="graphicDropdown" class="dropdown-toggle">
+                        <span class="icon">
+                            <ion-icon name="bar-chart-outline"></ion-icon>
+                        </span>
+                        <span class="title">Graphic</span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="/graphic/persentase-perkara">Persentase Perkara</a>
+                        <a href="/graphic/persentase-perprovinsi">Jumlah Perkara Perprovinsi</a>
+                        <a href="/graphic/persentase-umur">Persentase umur Tahanan</a>
+                        <a href="/graphic/jumlah-pengajuan">Jumlah Pengajuan Perbulan</a>
+                        <a href="/graphic/jenis-kelamin">Persentase Jenis Kelamin</a>
+                    </div>
+                </li>
+
                 <li class="logout-item">
                     <a href="logout" id="logoutButton">
                         <span class="icon">
                             <ion-icon name="log-out-outline"></ion-icon>
                         </span>
-                        <span class="title">Loguut</span>
+                        <span class="title">Logout</span>
                     </a>
                 </li>
             </ul>
         </div>
 
-        
         <!-- ========================= Main ==================== -->
-         
-        <div class="main" >
+        <div class="main">
             <div class="topbar">
                 <div class="toggle">
                     <ion-icon name="menu-outline"></ion-icon>
@@ -137,7 +262,7 @@
                 </div>
             </div>
             <div id="content">
-            <%- body %>
+                <%- body %>
             </div>
         </div>
 
@@ -149,8 +274,8 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
+
+    <script>
         document.getElementById('logoutButton').addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default button action
 
@@ -176,26 +301,58 @@
                 }
             });
         });
+
+// JavaScript untuk dropdown
+document.getElementById('graphicDropdown').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default action
+    const dropdownMenu = this.nextElementSibling;
+    const navigation = document.querySelector('.navigation');
+    
+    // Toggle the dropdown visibility
+    dropdownMenu.classList.toggle('show');
+    
+    // Adjust the margin of the last item in the navbar
+    if (dropdownMenu.classList.contains('show')) {
+        navigation.style.marginBottom = '200px'; // Sesuaikan margin-bottom
+    } else {
+        navigation.style.marginBottom = '0'; // Atur kembali margin-bottom
+    }
+    
+    // Handle dropdown opacity
+    dropdownMenu.style.opacity = dropdownMenu.classList.contains('show') ? '1' : '0';
+});
+
+// JavaScript untuk dropdown
+document.getElementById('alamatDropdown').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default action
+    const dropdownMenu = this.nextElementSibling;
+    const navigation = document.querySelector('.navigation');
+    
+    // Toggle the dropdown visibility
+    dropdownMenu.classList.toggle('show');
+    
+    // Adjust the margin of the last item in the navbar
+    if (dropdownMenu.classList.contains('show')) {
+        navigation.style.marginBottom = '200px'; // Sesuaikan margin-bottom
+    } else {
+        navigation.style.marginBottom = '0'; // Atur kembali margin-bottom
+    }
+    
+    // Handle dropdown opacity
+    dropdownMenu.style.opacity = dropdownMenu.classList.contains('show') ? '1' : '0';
+});
+// Close dropdown if clicked outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.dropdown');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+    const navigation = document.querySelector('.navigation');
+    
+    if (!dropdown.contains(event.target)) {
+        dropdownMenu.classList.remove('show');
+        dropdownMenu.style.opacity = '0';
+        navigation.style.marginBottom = '0'; // Reset margin-bottom ketika dropdown ditutup
+    }
+});
     </script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-    <script>
-$(document).ready(function() {
-    // Ketika link di klik
-    $('a.nav-link').on('click', function(e) {
-        e.preventDefault(); // Mencegah default behavior
-        
-        var url = $(this).attr('href'); // Mendapatkan URL dari href
-        
-        // Memuat konten ke dalam div #content
-        $('#content').load(url + ' #content', function() {
-            // Setelah konten dimuat, Anda dapat menambahkan skrip atau fungsi tambahan jika diperlukan
-        });
-    });
-});
-</script>
-</body>
-
-</html>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous

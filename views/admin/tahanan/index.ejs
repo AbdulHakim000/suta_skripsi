@@ -68,6 +68,7 @@
                         <th style="text-align: center; vertical-align: middle;">Perkara</th>
                         <th style="text-align: center; vertical-align: middle;">Izin Pembesukan</th>
                         <th style="text-align: center; vertical-align: middle; width: 250px;">Action</th>
+                        <th style="text-align: center; vertical-align: middle; width: 100px;">File</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -110,6 +111,13 @@
                                 <% } %>
 
                                     <a href="/tahanan/detail/<%= tahanan.id  %>" class="btn btn-success badge rounded-pill"><i class="bi bi-info-circle"></i>Detail</a> 
+                                </td>
+
+                                 <td style="text-align: center; vertical-align: middle;">
+                                    <a href="/tahanan/cetak/<%= tahanan.id %>" >
+                                    <i class="fa-solid fa-file-pdf fa-xl"></i>
+                                    </a>
+
                                 </td>
                                 
                             </tr>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafik Tahanan</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script> <!-- Plugin untuk label data -->
+        <style>
+        /* Mengatur ukuran kanvas */
+        #myChart {
+            max-width: 1000px; /* Lebar maksimum kanvas */
+            max-height: 700px; /* Tinggi maksimum kanvas */
+        }
+    </style>
+</head>
+<body>
+
+    <div style="padding: 50px; display: flex; flex-direction: column; align-items: center;">
+        <h2>Grafik Tahanan Berdasarkan Perkara</h2>
+        <canvas id="myChart" width="400" height="100"></canvas>
+    </div>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/graphic/data-persentase-perkara');
+            const data = await response.json();
+            return data;
+        }
+
+        function createChart(data) {
+            const ctx = document.getElementById('myChart').getContext('2d');
+
+            // Generate a color array for each data point
+            const colors = [
+                'rgba(75, 192, 192, 0.5)', // Blue
+                'rgba(255, 99, 132, 0.5)', // Red
+                'rgba(255, 159, 64, 0.5)', // Orange
+                'rgba(153, 102, 255, 0.5)', // Purple
+                'rgba(255, 206, 86, 0.5)'  // Yellow
+            ];
+
+            new Chart(ctx, {
+                type: 'doughnut', // Atau 'pie', 'line', dll.
+                data: {
+                    labels: data.map(d => d.label),
+                    datasets: [{
+                        label: 'Persentase Tahanan Berdasarkan Perkara',
+                        data: data.map(d => d.value),
+                        backgroundColor: data.map((_, index) => colors[index % colors.length]),
+                        borderColor: data.map((_, index) => colors[index % colors.length].replace('0.2', '1')),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100 // Mengatur skala maksimum y-axis menjadi 100%
+                        }
+                    },
+                    plugins: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            formatter: (value) => value.toFixed(2) + '%', // Menampilkan persentase
+                            color: 'black', // Warna teks persentase
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels] // Mengaktifkan plugin ChartDataLabels
+            });
+        }
+
+        async function renderChart() {
+            const data = await fetchData();
+            createChart(data);
+        }
+
+        renderChart();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafik Pengajuan Per Tanggal</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div style="padding: 50px; display: flex; flex-direction: column; align-items: center;">
+        <h2>Grafik Pengajuan Surat Izin Besuk Perhari</h2>
+
+        <!-- Dropdown untuk memilih bulan dan tahun -->
+        <div style="margin-bottom: 20px;">
+            <label for="month">Bulan:</label>
+            <select id="month">
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+
+            <label for="year">Tahun:</label>
+            <select id="year">
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+            </select>
+
+            <button onclick="renderChart()">Tampilkan Grafik</button>
+        </div>
+
+        <canvas id="myChart" width="400" height="160"></canvas>
+    </div>
+    <script>
+
+    async function fetchData(month, year) {
+    try {
+        const response = await fetch(`/graphic/data-pengajuan-pertanggal?month=${month}&year=${year}`);
+        
+        if (response.status === 404) {
+            throw new Error('Tidak Ada Data Pengajuan Perhari Yang Ditemukan.');
+        }
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        console.log('Data received:', data); // Untuk debugging
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return { error: error.message, labels: [], data: [] }; // Kembalikan data kosong dan pesan kesalahan
+    }
+}
+
+async function renderChart() {
+    const month = document.getElementById('month').value;
+    const year = document.getElementById('year').value;
+
+    const data = await fetchData(month, year);
+
+    if (data.error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.error,
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    // Cek format data yang diterima
+    if (!Array.isArray(data.labels) || !Array.isArray(data.data)) {
+        console.error('Data format is incorrect:', data);
+        return;
+    }
+    
+    createChart(data);
+}
+
+function createChart(data) {
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Jumlah Pengajuan',
+                data: data.data,
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Jumlah Pengajuan'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(0); // Menghapus angka desimal
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Tanggal'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Load the chart initially with the default month and year
+renderChart();
+</script>
+
+
+<!-- perbulan -->
+ <div style="padding: 50px; display: flex; flex-direction: column; align-items: center;">
+<h2>Graphic Pengajuan Surat Izin Besuk Perbulan</h2>
+<canvas id="bulanChart" width="600" height="300"></canvas>
+</div>
+
+    <script>
+    fetch('/graphic/data-pengajuan-perbulan') // Ganti dengan path ke route backend Anda
+        .then(response => response.json())
+        .then(data => {
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+
+            const labels = data.map(item => `${months[item.month - 1]} ${item.year}`);
+            const values = data.map(item => item.count);
+
+            // Array warna untuk setiap bulan
+            const colors = [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ];
+
+            const borderColors = [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ];
+
+            // Pastikan jumlah warna sesuai dengan jumlah data
+            const backgroundColors = colors.slice(0, values.length);
+            const borderColorsUsed = borderColors.slice(0, values.length);
+
+            const ctx = document.getElementById('bulanChart').getContext('2d');
+            const barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Jumlah Pengajuan Surat',
+                        data: values,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColorsUsed,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+</body>
+</html>

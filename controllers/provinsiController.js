@@ -20,6 +20,8 @@ module.exports = {
                 res.render('provinsi/index', {
                     layout: layout,
                     title: 'Halaman provinsi',
+                    user: req.session.user,
+                    userRole: req.session.user.role,
                     provinsis: rows
                 });
             }
@@ -46,6 +48,8 @@ module.exports = {
             res.render('provinsi/detail_modal', { 
                 layout: layout,
                 title: 'Halaman provinsi',
+                user: req.session.user,
+                userRole: req.session.user.role,
                 provinsi, 
                 provinsis: rows})
         }

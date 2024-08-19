@@ -27,4 +27,9 @@ router.get('/cetak/kamtibum', (req, res) => {
     console.log('Route accessed');
     tahananController.cetakLaporanTahananKamtibum(req, res);
 });
+
+router.get('/cetak/:id', (req, res) => {
+    console.log('Route accessed');
+    tahananController.cetakPDFTahanan(req, res);
+});
 module.exports = router;
