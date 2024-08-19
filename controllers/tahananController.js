@@ -3,6 +3,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const path = require('path');
 const multer = require('multer');
 
@@ -1411,4 +1412,46 @@ cetakLaporanTahananKamtibum: async (req, res) => {
         res.status(500).send('Error generating Excel report');
     }
 },
+
+    downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel tahanan
+            const result = await pool.query("SELECT * FROM tahanan");
+            const tahananData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'Nama Tahanan', value: 'nama_tahanan' },
+                { label: 'Registrasi Tahanan', value: 'registrasi_tahanan' },
+                { label: 'Tanggal Lahir', value: 'tgl_lahir' },
+                { label: 'Tempat Lahir', value: 'tmp_lahir' },
+                { label: 'Provinsi', value: 'provinsi' },
+                { label: 'Kabupaten / Kota', value: 'kabupaten' },
+                { label: 'Kecamatan', value: 'kecamatan' },
+                { label: 'Kelurahan', value: 'kelurahan' },
+                { label: 'Agama', value: 'agama' },
+                { label: 'Jenis Kelamin', value: 'jns_kelamin' },
+                { label: 'Pekerjaan', value: 'pekerjaan' },
+                { label: 'pendidikan', value: 'pendidikan' },
+                { label: 'Perkara', value: 'perkara' },
+                { label: 'Kewarganegaraan', value: 'kewarganegaraan' },
+                { label: 'Tanggal Surat Tuntutan', value: 'tgl_surat_tuntutan' },
+
+
+                // Tambahkan fields lain sesuai dengan kolom di tabel tahanan
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(tahananData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('tahanan_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },  
 }

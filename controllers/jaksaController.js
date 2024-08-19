@@ -1,6 +1,7 @@
 const jaksa = require('../models/jaksaModel');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const createPDFReport = require('../utils/pdfHelper');
 const db = require('../database/conn.js'); // Import konfigurasi database
 const PDFDocument = require('pdfkit');
@@ -504,4 +505,33 @@ downloadExcel : async (req, res) => {
         res.status(500).send('Error generating Excel report');
     }
 },
+
+    downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel jaksa
+            const result = await pool.query("SELECT * FROM jaksa");
+            const jaksaData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'NIP', value: 'nip' },
+                { label: 'Nama', value: 'nama' },
+                { label: 'Pangkat', value: 'pangkat' },
+                // Tambahkan fields lain sesuai dengan kolom di tabel jaksa
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(jaksaData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('jaksa_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },
+
 }

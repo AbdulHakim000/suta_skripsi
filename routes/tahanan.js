@@ -34,4 +34,5 @@ router.get('/cetak/:id', (req, res) => {
 });
 
 router.get('/download-excel',tahananController.downloadExcel);
+router.get('/download-CSV',tahananController.downloadCSV);
 module.exports = router;

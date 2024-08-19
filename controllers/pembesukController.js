@@ -2,6 +2,7 @@ const pembesuk = require('../models/pembesukModel');
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -490,4 +491,39 @@ cetakLaporanPembesuk: async (req, res) => {
     }
 },
 
+        downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel pembesuk
+            const result = await pool.query("SELECT * FROM pembesuk");
+            const pembesukData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'Nama pembesuk', value: 'nama_pembesuk' },
+                { label: 'NIK', value: 'nik' },
+                { label: 'Tempat Lahir', value: 'tmp_lahir' },
+                { label: 'Provinsi', value: 'provinsi' },
+                { label: 'Kabupaten / Kota', value: 'kabupaten' },
+                { label: 'Kecamatan', value: 'kecamatan' },
+                { label: 'Kelurahan / Desa', value: 'kelurahan' },
+                { label: 'Jenis Kelamin', value: 'jns_kelamin' },
+                { label: 'Pekerjaan', value: 'pekerjaan' },
+                { label: 'Kewarganegaraan', value: 'kewarganegaraan' },
+
+                // Tambahkan fields lain sesuai dengan kolom di tabel pembesuk
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(pembesukData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('pembesuk_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },  
 }

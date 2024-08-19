@@ -2,6 +2,7 @@ const surat = require('../models/suratModel');
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -704,4 +705,36 @@ downloadExcel : async (req, res) => {
         res.status(500).send('Error generating Excel report');
     }
 },
+
+        downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel surat
+            const result = await pool.query("SELECT surat.*, tahanan.nama_tahanan,  pembesuk.nama_pembesuk FROM surat INNER JOIN tahanan ON surat.registrasi_tahanan = tahanan.registrasi_tahanan INNER JOIN pembesuk ON surat.nik = pembesuk.nik");
+            const suratData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'NIK', value: 'nik' },
+                { label: 'Nama Pembesuk', value: 'nama_pembesuk' },
+                { label: 'Registrasi Tahanan', value: 'registrasi_tahanan' },
+                { label: 'Nama Tahanan', value: 'nama_tahanan' },
+                { label: 'Hubungan', value: 'hubungan' },
+                { label: 'Tanggal Besuk 1', value: 'tanggal1' },
+                { label: 'Tanggal Besuk 2', value: 'tanggal2' },   
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(suratData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('surat_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },
+
 }

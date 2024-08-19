@@ -2,6 +2,7 @@ const pengelolaan = require('../models/pengelolaanModel');
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -585,4 +586,46 @@ addFoto : (req, res, next) => {
         res.status(500).send('Error generating Excel report');
     }
 },
+
+        downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel pengelolaan
+            const result = await pool.query("SELECT pengelolaan.*, tahanan.nama_tahanan, tahanan.perkara, tahanan.tgl_lahir, tahanan.pekerjaan FROM pengelolaan INNER JOIN tahanan ON pengelolaan.registrasi_tahanan = tahanan.registrasi_tahanan");
+            const pengelolaanData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'Registrasi Perkara', value: 'registrasi_perkara' },
+                { label: 'Registrasi Tahanan', value: 'registrasi_tahanan' },
+                { label: 'Nama Tahanan', value: 'nama_tahanan' },
+                { label: 'Perkara', value: 'perkara' },
+                { label: 'Tanggal Lahir', value: 'tgl_lahir' },
+                { label: 'Pekerjaan', value: 'pekerjaan' },
+                { label: 'Kronologi', value: 'kronologi' },
+                { label: 'Jaksa1', value: 'jaksa1' },
+                { label: 'Jaksa2', value: 'jaksa2' },
+                { label: 'Jaksa3', value: 'jaksa3' },
+                { label: 'Jaksa4', value: 'jaksa4' },
+                { label: 'Barang Bukti', value: 'barang_bukti' },
+                { label: 'Melanggar Pasal', value: 'melanggar_pasal' },
+                { label: 'Lapas', value: 'lapas' },
+                { label: 'Durasi Penahanan', value: 'durasi_penahanan' },
+                { label: 'Tanggal Penuntutan', value: 'tgl_penuntutan' },
+
+                // Tambahkan fields lain sesuai dengan kolom di tabel pengelolaan
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(pengelolaanData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('pengelolaan_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },
 }

@@ -2,6 +2,7 @@ const pengajuan = require('../models/pengajuanModel');
 const PDFDocument = require('pdfkit');
 const excel = require('exceljs');
 const pool = require('../database/pool.js');
+const { Parser } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -1511,4 +1512,37 @@ cetakPDFSurat: async (req, res) => {
         res.status(500).send('Error generating Excel report');
     }
 },
+
+    downloadCSV: async (req, res) => {
+        try {
+            // Query untuk mengambil data dari tabel pengajuan
+            const result = await pool.query("SELECT * FROM pengajuan_surat");
+            const pengajuanData = result[0]; // Mengambil data dari hasil query
+
+            // Definisikan fields untuk CSV
+            const fields = [
+                { label: 'Nama Pembesuk', value: 'nama_pembesuk' },
+                { label: 'Pekerjaan', value: 'pekerjaan_pembesuk' },
+                { label: 'Hubungan', value: 'hubungan' },
+                { label: 'Registrasi Tahanan', value: 'registrasi_tahanan' },
+                { label: 'Tanggal Besuk', value: 'tanggal_besuk' },
+                { label: 'Dijukan Oleh', value: 'pengajuan_by' },
+                { label: 'Status', value: 'status_pengajuan' },
+
+                // Tambahkan fields lain sesuai dengan kolom di tabel pengajuan
+            ];
+
+            // Konversi data ke CSV
+            const json2csvParser = new Parser({ fields });
+            const csv = json2csvParser.parse(pengajuanData);
+
+            // Set header untuk unduhan
+            res.header('Content-Type', 'text/csv');
+            res.attachment('pengajuan_report.csv');
+            res.send(csv);
+        } catch (error) {
+            console.error('Error generating CSV report:', error);
+            res.status(500).send('Error generating CSV report');
+        }
+    },
 }

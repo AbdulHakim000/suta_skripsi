@@ -33,5 +33,6 @@ router.get('/cetak/staff',userController.cetakPDFStaff);
 router.get('/cetak/public',userController.cetakPDFPublic);
 
 router.get('/download-excel',userController.downloadExcel);
+router.get('/download-CSV',userController.downloadCSV);
 
 module.exports = router;

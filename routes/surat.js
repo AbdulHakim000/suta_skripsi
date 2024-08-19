@@ -17,4 +17,5 @@ router.get('/cetak/:id', (req, res) => {
     suratController.cetakPDFSurat(req, res);
 });
 router.get('/download-excel', suratController.downloadExcel);
+router.get('/download-csv', suratController.downloadCSV);
 module.exports = router;
